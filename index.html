@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MU Map Monster Viewer — Modular</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header>
+    <h1>MU Map Monster Viewer — Modular</h1>
+    <div class="muted">Tự đọc <code>map/maps.json</code>, <code>monster/Monster.txt</code>, <code>monster/MonsterSetBase.txt</code>.</div>
+  </header>
+
+  <main>
+    <!-- CỘT TRÁI: Cấu hình + Chọn map + Thống kê + Điều khiển (ở đáy) -->
+    <section class="card card-left">
+      <h2>Cấu hình &amp; Ghi chú</h2>
+      <div class="content content-left">
+        <div class="legend" style="margin-bottom:10px">
+          <span class="chip"><span class="dot danger"></span> Monster (single)</span>
+          <span class="chip"><span class="dot npc"></span> NPC (single)</span>
+          <span class="chip"><span class="box spot"></span> Spot / Vùng</span>
+        </div>
+
+        <!-- Chọn map -->
+        <div class="stack gap-8">
+          <div class="row gap-8">
+            <select id="mapSelect" disabled></select>
+            <button id="reloadAll" class="primary">Reload</button>
+          </div>
+
+          <!-- Thống kê -->
+          <div id="mapStats" class="stats-panel">
+            <div class="muted">Chọn map để xem thống kê.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Điều khiển cố định ở đáy thẻ (không còn nổi bên phải) -->
+      <div class="left-controls">
+        <div class="fc-row">
+          <label for="scale" class="muted">Scale</label>
+          <button id="scaleMinus" title="Giảm">−</button>
+          <input id="scale" type="range" min="0.25" max="1" step="0.05" value="1" />
+          <button id="scalePlus" title="Tăng">+</button>
+          <span id="scaleVal" class="muted w48 right">100%</span>
+        </div>
+        <div class="fc-row">
+          <button id="calibToggle" title="Bật/tắt calibrate">Calibrate</button>
+          <button id="calibReset" title="Xoá offset map hiện tại">Reset</button>
+          <span id="coordReadout" class="coords">(x, y) —</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CỘT PHẢI: Danh sách + Canvas -->
+    <section class="card" style="grid-column:2/3;">
+      <div class="content content-grid">
+        <div>
+          <h3 class="muted" style="margin-top:0">Danh sách quái (map đang chọn)</h3>
+          <div id="mobList" class="scroll">
+            <div class="muted" style="padding:8px">Chưa có dữ liệu.</div>
+          </div>
+
+          <!-- Info Panel -->
+          <div id="infoPanel" class="info-panel" style="margin-top:8px">
+            <div class="muted">Chọn 1 spot hoặc single để xem chi tiết.</div>
+          </div>
+        </div>
+
+        <div>
+          <canvas id="view" width="1024" height="1024"></canvas>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./app/main.js"></script>
+</body>
+</html>

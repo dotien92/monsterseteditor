@@ -1,0 +1,21 @@
+# Hệ điều hành & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# PHP/Apache
+vendor/
+composer.lock
+*.log
+cache/
+tmp/
+
+# Frontend (nếu có)
+node_modules/
+dist/
+build/
+
+# Môi trường
+.env
+.env.local
