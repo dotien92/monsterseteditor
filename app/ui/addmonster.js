@@ -1,5 +1,5 @@
-import state from "../state.js";
-import { render } from "../render.js";
+import { state } from "../state.js";
+import { draw } from "../render.js";
 
 let dialogEl;
 
@@ -40,12 +40,12 @@ function closeDialog() {
 function renderList(filter) {
   const listEl = dialogEl.querySelector("#monsterList");
   listEl.innerHTML = "";
-  const monsters = Object.values(state.monsters)
+  const monsters = Object.values(state.classes)  // ⚠️ state.monsters chưa có → dùng state.classes (Monster.txt)
     .filter(m => !filter || m.name.toLowerCase().includes(filter.toLowerCase()));
   monsters.forEach(m => {
     const row = document.createElement("div");
     row.className = "list-row";
-    row.textContent = `[${m.id}] ${m.name} (Lv ${m.level})`;
+    row.textContent = `[${m.id}] ${m.name}`;
     row.addEventListener("click", () => {
       state.addingMonster = m;
       closeDialog();
@@ -56,30 +56,33 @@ function renderList(filter) {
 
 export function bindCanvasForAddMonster(canvas) {
   canvas.addEventListener("click", (e) => {
-    if (!state.addingMonster) return;
+    if (!state.addingMonster || state.currentMapId == null) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = Math.floor((e.clientX - rect.left) / state.scale);
-    const y = Math.floor((e.clientY - rect.top) / state.scale);
+    const x = Math.floor((e.clientX - rect.left) / state.viewScale);
+    const y = Math.floor((e.clientY - rect.top) / state.viewScale);
 
-    const spawn = {
-      type: 1, // mặc định Monster block
-      monsterId: state.addingMonster.id,
-      mapId: state.currentMap.mapId,
-      moveRange: 20,
-      x1: x, y1: y,
-      x2: x+5, y2: y+5,
+    const mapId = state.currentMapId;
+    const data = state.monstersByMap[mapId] ||= { points: [], spots: [] };
+
+    // Thêm 1 spot quái mới
+    data.spots.push({
+      classId: state.addingMonster.id,
+      x1: x,
+      y1: y,
+      x2: x + 5,
+      y2: y + 5,
       dir: 0,
       count: 5,
-      value: 0
-    };
+      type: "spot",   // để save.js phân loại block 1
+      isNPC: false,
+      sourceLine: -1  // đánh dấu là quái thêm mới
+    });
 
-    if (!state.spawns[state.currentMap.mapId]) {
-      state.spawns[state.currentMap.mapId] = [];
-    }
-    state.spawns[state.currentMap.mapId].push(spawn);
+    console.log("✅ Đã thêm monster:", state.addingMonster.name, "vào map", mapId, "tại", x, y);
+    console.log("📦 monstersByMap[mapId] =", data);
 
     state.addingMonster = null;
-    render();
+    draw(canvas);
   });
 }

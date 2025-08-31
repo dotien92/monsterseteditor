@@ -12,7 +12,8 @@ import { state } from './state.js';
 import { initAddMonsterUI, bindCanvasForAddMonster } from "./ui/addmonster.js";
 import { exportMonsterSetBase, downloadFile } from "./save.js";
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener('DOMContentLoaded', async ()=>{
+
   initAddMonsterUI();
   bindCanvasForAddMonster(document.getElementById("view"));
 
@@ -20,9 +21,6 @@ window.addEventListener("DOMContentLoaded", () => {
     const txt = exportMonsterSetBase();
     downloadFile("MonsterSetBase.txt", txt);
   });
-});
-
-window.addEventListener('DOMContentLoaded', async ()=>{
   const { mapSelect, canvas, mobList } = bindUI();
   bindListInteractions(mobList);
 

@@ -6,13 +6,22 @@ import { CONFIG } from './config.js';
 export async function loadAll(){
   // 1) maps.json + ảnh
   state.images = [];
+  state.maps = []; // giữ danh sách map với name
+
   const manifest = await fetchJSON(CONFIG.PATHS.MAPS_JSON);
   for (const entry of manifest){
-    const name  = entry.file || entry.name;
+    const file  = entry.file;
     const mapId = entry.mapId != null ? Number(entry.mapId) : null;
-    const url   = 'map/' + name;
+    const url   = 'map/' + file;
     const meta  = await readImageMetaFromURL(url);
-    state.images.push({ name, url: meta.url, mapId, w: meta.w, h: meta.h });
+
+    const name = entry.name ?? file.replace(/^\d+_/, "").replace(/\.png$/i, "");
+
+    // giữ thông tin cho render
+    state.images.push({ name: file, url: meta.url, mapId, w: meta.w, h: meta.h });
+
+    // giữ thông tin map (dùng khi Save)
+    state.maps.push({ id: mapId, name, file });
   }
 
   // 2) Monster.txt + MonsterSetBase.txt
@@ -109,19 +118,16 @@ export function parseMSB(txt){
       b.spots.push({ classId: mob, x1, y1, x2, y2, count, value, isNPC: false, type: 'invasion', sourceLine: ln });
     }
     else if (section === 4){
-      // 4: <ClassId> <MapId> <Dis> <X1> <Y1> <X2> <Y2> <Dir> <Count> <Value>
-      if (t.length < 10) continue;
+      // 4: <ClassId> <MapId> <Dis> <X> <Y> <Dir>
+      if (t.length < 6) continue;
       const mob = Number(t[0]);
       const map = Number(t[1]);
-      const x1  = Number(t[3]);
-      const y1  = Number(t[4]);
-      const x2  = Number(t[5]);
-      const y2  = Number(t[6]);
-      const count = Number(t[8]);
-      const value = Number(t[9]);
-      if (![mob,map,x1,y1,x2,y2].every(Number.isFinite)) continue;
+      const x   = Number(t[3]);
+      const y   = Number(t[4]);
+      const dir = Number(t[5]);
+      if (![mob,map,x,y].every(Number.isFinite)) continue;
       const b = ensure(map);
-      b.spots.push({ classId: mob, x1, y1, x2, y2, count, value, isNPC: false, type: 'event', sourceLine: ln });
+      b.points.push({ classId: mob, x, y, dir, isNPC: false, type: 'battle', sourceLine: ln });
     }
   }
 }

@@ -1,13 +1,18 @@
 [
-  {"file": "0_Lorencia.png", "mapId": 0},
-  {"file": "1_Dungeon.png", "mapId": 1},
-  {"file": "2_Devias.png", "mapId": 2},
-  {"file": "3_Noria.png", "mapId": 3},
-  {"file": "4_Lost_Tower.png", "mapId": 4},
-  {"file": "6_Stadium.png", "mapId": 6},
-  {"file": "7_Atlans.png", "mapId": 7},
-  {"file": "8_Tarkan.png", "mapId": 8},
-  {"file": "10_Icarus.png", "mapId": 10}
-
-
+  {"file": "0_Lorencia.png", "mapId": 0, "name": "Lorencia"},
+  {"file": "1_Dungeon.png", "mapId": 1, "name": "Dungeon"},
+  {"file": "2_Devias.png", "mapId": 2, "name": "Devias"},
+  {"file": "3_Noria.png", "mapId": 3, "name": "Noria"},
+  {"file": "4_Lost_Tower.png", "mapId": 4, "name": "Lost Tower"},
+  {"file": "6_Stadium.png", "mapId": 6, "name": "Stadium"},
+  {"file": "7_Atlans.png", "mapId": 7, "name": "Atlans"},
+  {"file": "8_Tarkan.png", "mapId": 8, "name": "Tarkan"},
+  {"file": "9_DevilSquare.png", "mapId": 9, "name": "DevilSquare"},
+  {"file": "10_Icarus.png", "mapId": 10, "name": "Icarus"},
+  {"file": "11_BloodCastle1.png", "mapId": 11, "name": "BloodCastle_1"},
+  {"file": "12_BloodCastle2.png", "mapId": 12, "name": "BloodCastle_2"},
+  {"file": "13_BloodCastle3.png", "mapId": 13, "name": "BloodCastle_3"},
+  {"file": "14_BloodCastle4.png", "mapId": 14, "name": "BloodCastle_4"},
+  {"file": "15_BloodCastle5.png", "mapId": 15, "name": "BloodCastle_5"},
+  {"file": "16_BloodCastle6.png", "mapId": 16, "name": "BloodCastle_6"}
 ]
