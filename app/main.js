@@ -9,7 +9,18 @@ import {
 } from './ui.js';
 import { draw } from './render.js';
 import { state } from './state.js';
+import { initAddMonsterUI, bindCanvasForAddMonster } from "./ui/addmonster.js";
+import { exportMonsterSetBase, downloadFile } from "./save.js";
 
+window.addEventListener("DOMContentLoaded", () => {
+  initAddMonsterUI();
+  bindCanvasForAddMonster(document.getElementById("view"));
+
+  document.getElementById("saveMonsterBtn").addEventListener("click", () => {
+    const txt = exportMonsterSetBase();
+    downloadFile("MonsterSetBase.txt", txt);
+  });
+});
 
 window.addEventListener('DOMContentLoaded', async ()=>{
   const { mapSelect, canvas, mobList } = bindUI();
