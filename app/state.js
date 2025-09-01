@@ -12,4 +12,17 @@ export const state = {
   dragging: /** @type {null | { mode:'move' | 'resize', corner?: 'tl'|'tr'|'bl'|'br', grab?:{ox:number,oy:number,w:number,h:number}, anchor?:{ax:number,ay:number} } } */(null),
   hover: /** @type {null | { kind:'point'|'spot', idx:number }} */(null),
   trapIdSet: /** @type {Set<number>} */(new Set()),
+  selection: null,
+  hover: null,
+  dragging: null,
+
+  // Copy/Paste
+  clipboard: null,
+
+  // Undo/Redo
+  history: [],
+  future: [],
+
+  // mouse position tracking for paste
+  lastMouse: null,
 };

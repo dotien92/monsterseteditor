@@ -13,10 +13,7 @@ import { initAddMonsterUI, bindCanvasForAddMonster } from "./ui/addmonster.js";
 import { exportMonsterSetBase, downloadFile } from "./save.js";
 
 window.addEventListener('DOMContentLoaded', async ()=>{
-
-  initAddMonsterUI();
   bindCanvasForAddMonster(document.getElementById("view"));
-
   document.getElementById("saveMonsterBtn").addEventListener("click", () => {
     const txt = exportMonsterSetBase();
     downloadFile("MonsterSetBase.txt", txt);
@@ -26,10 +23,12 @@ window.addEventListener('DOMContentLoaded', async ()=>{
 
   try{
     await loadAll();
+    initAddMonsterUI();
     refreshMapSelect(mapSelect);
     renderMonsterList(mobList);
     renderInfoPanel(document.getElementById('infoPanel'));
     renderMapStats(document.getElementById('mapStats'));
+    state.history.push(JSON.stringify(state.monstersByMap));
 
     if(state.currentMapId==null){
       const first = state.images.find(i=>i.mapId!=null)?.mapId;
