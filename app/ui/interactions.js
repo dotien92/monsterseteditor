@@ -14,6 +14,30 @@ import { renderMapStats } from './stats.js';   // ✅ thêm
 
 const gclamp = (v)=> Math.max(0, Math.min(CONFIG.GRID_SIZE - 1, Math.round(v)));
 
+function isVisibleByFilter(hit) {
+  if (!hit) return false;
+  const f = state.filters || {
+    npc:false, decoration:false, monster:true, invasion:false, battle:true
+  };
+  const mapId = state.currentMapId;
+  const data = state.monstersByMap[mapId];
+  if (!data) return false;
+
+  if (hit.kind === 'point') {
+    const p = data.points[hit.idx];
+    if (!p) return false;
+    if (p.type === 'npc'        && !f.npc) return false;
+    if (p.type === 'decoration' && !f.decoration) return false;
+    if (p.type === 'battle'     && !f.battle) return false;
+  } else if (hit.kind === 'spot') {
+    const s = data.spots[hit.idx];
+    if (!s) return false;
+    if (s.type === 'spot'     && !f.monster) return false;
+    if (s.type === 'invasion' && !f.invasion) return false;
+  }
+  return true;
+}
+
 function refreshMobList(mobList) {
   if (mobList) renderMonsterList(mobList);
 }
@@ -89,7 +113,8 @@ export default function bindUI(){
   // hover/drag/resize & sync list
   canvas.addEventListener('mousedown', (ev)=>{
     if(state.currentMapId==null || state.calibrating) return;
-    const hit = hitTest(ev, canvas);
+    let hit = hitTest(ev, canvas);
+    if (!isVisibleByFilter(hit)) hit = null;
     state.selection = hit ? { kind: hit.kind, idx: hit.idx } : null;
     updateListSelection(mobList);
     renderInfoPanel(infoPanel);
@@ -150,7 +175,8 @@ export default function bindUI(){
 
     // không kéo: xử lý hover/cursor
     if(!state.dragging || !state.selection){
-      const h = hitTest(ev, canvas);
+      let h = hitTest(ev, canvas);
+      if (!isVisibleByFilter(h)) h = null;
       if(h && h.kind==='spot' && h.resize){
         const mapId = state.currentMapId;
         const s = state.monstersByMap[mapId]?.spots[h.idx];
