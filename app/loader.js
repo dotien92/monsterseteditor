@@ -100,7 +100,15 @@ export function parseMSB(txt){
       const count = Number(t[8]);
       if (![mob,map,x1,y1,x2,y2].every(Number.isFinite)) continue;
       const b = ensure(map);
-      b.spots.push({ classId: mob, x1, y1, x2, y2, count, isNPC: false, type: 'spot', sourceLine: ln });
+
+      // ✅ phân biệt single vs spot
+      const isSingle = (x1 === x2 && y1 === y2);
+
+      b.spots.push({
+        classId: mob, x1, y1, x2, y2, count,
+        isNPC: false, type: 'spot', sourceLine: ln,
+        lockResize: isSingle   // 👈 thêm cờ
+      });
     }
     else if (section === 3){
       // 3: <ClassId> <MapId> <Dis> <X1> <Y1> <X2> <Y2> <Dir> <Count> <Value>
@@ -115,7 +123,14 @@ export function parseMSB(txt){
       const value = Number(t[9]);
       if (![mob,map,x1,y1,x2,y2].every(Number.isFinite)) continue;
       const b = ensure(map);
-      b.spots.push({ classId: mob, x1, y1, x2, y2, count, value, isNPC: false, type: 'invasion', sourceLine: ln });
+
+      const isSingle = (x1 === x2 && y1 === y2);
+
+      b.spots.push({
+        classId: mob, x1, y1, x2, y2, count, value,
+        isNPC: false, type: 'invasion', sourceLine: ln,
+        lockResize: isSingle   // 👈 thêm cờ
+      });
     }
     else if (section === 4){
       // 4: <ClassId> <MapId> <Dis> <X> <Y> <Dir>

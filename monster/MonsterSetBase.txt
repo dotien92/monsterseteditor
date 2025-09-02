@@ -285,6 +285,7 @@ end
 1
 //Mob	Map	Radio	CordX	CordY	CordX2	CordY2	Dir 	Quant	Name
 3	0	2	187	119	188	117	-1	4	// Spider
+0 0 0 55 41 55 41 0 1 // Bull Fighter
 //2	0	2	191	142	194	142	-1	4	// Budge Dragon
 //3	0	2	179	154	174	155	-1	2	// Spider
 //2	0	2	179	154	174	155	-1	3	// Budge Dragon
