@@ -64,8 +64,35 @@ export function initAddMonsterUI() {
   }
 
   renderParams(parseInt(blockSelect.value, 10));
+
+   // 🟢 Đổi block type → render lại params + huỷ chế độ thêm nếu đang active
   blockSelect.addEventListener("change", () => {
-    renderParams(parseInt(blockSelect.value, 10));
+    const newBlockType = parseInt(blockSelect.value, 10);
+    renderParams(newBlockType);
+
+    if (state.addingMonster) {
+      console.log("⚠️ Đổi block type → huỷ chế độ thêm");
+      state.addingMonster = null;
+      state.dragData = null;
+      hideTooltip();
+      draw(document.getElementById("view"));
+    }
+  });
+
+  // 🟢 Đổi monster → update id trong state.addingMonster nếu đang thêm
+  const monsterSelect = panel.querySelector(".monsterId");
+  monsterSelect.addEventListener("change", () => {
+    const newMonsterId = parseInt(monsterSelect.value, 10);
+
+    if (state.addingMonster) {
+      state.addingMonster.id = newMonsterId;
+      console.log("🔄 Đổi monster khi đang thêm:", state.addingMonster);
+
+      // cập nhật tooltip ngay để thấy tên quái mới
+      if (state.lastMouse) {
+        updateTooltip({ clientX: state.lastMouse.x, clientY: state.lastMouse.y });
+      }
+    }
   });
 
   panel.querySelector(".addBtn").onclick = () => {
@@ -124,6 +151,16 @@ export function bindCanvasForAddMonster(canvas) {
 
     // track mouse cho tooltip/paste
     state.lastMouse = { x: e.clientX, y: e.clientY };
+  });
+
+  // 🟢 Khi chuột rời canvas → ẩn tooltip
+  canvas.addEventListener("mouseleave", () => {
+    if (tooltipEl) tooltipEl.style.display = "none";
+  });
+
+  // 🟢 Khi chuột vào lại canvas → hiện tooltip (nếu đang thêm/paste)
+  canvas.addEventListener("mouseenter", () => {
+    if (tooltipEl) tooltipEl.style.display = "block";
   });
 
   canvas.addEventListener("mouseup", (e) => {
@@ -224,6 +261,7 @@ function updateTooltip(e) {
   if (!tooltipEl) return;
   tooltipEl.style.left = e.clientX + 12 + "px";
   tooltipEl.style.top = e.clientY + 12 + "px";
+
   if (state.addingMonster) {
     tooltipEl.innerText = `Thêm: ${state.classes[state.addingMonster.id]?.name || state.addingMonster.id} (x${state.addingMonster.count || 1})`;
   }
