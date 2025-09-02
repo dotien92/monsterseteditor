@@ -23,11 +23,12 @@ export function renderMonsterFilters(container){
   }
 
   container.innerHTML = `
-    <label><input type="checkbox" data-ft="npc" ${state.filters.npc?'checked':''}/> NPC</label>
-    <label><input type="checkbox" data-ft="decoration" ${state.filters.decoration?'checked':''}/> Decoration</label>
-    <label><input type="checkbox" data-ft="monster" ${state.filters.monster?'checked':''}/> Monster</label>
-    <label><input type="checkbox" data-ft="invasion" ${state.filters.invasion?'checked':''}/> Invasion</label>
-    <label><input type="checkbox" data-ft="battle" ${state.filters.battle?'checked':''}/> Battle</label>
+    <label class="filter-npc"><input type="checkbox" data-ft="npc" ${state.filters.npc ? 'checked' : ''}/> NPC</label>
+    <label class="filter-deco"><input type="checkbox" data-ft="decoration" ${state.filters.decoration ? 'checked' : ''}/> Decoration</label>
+    <label class="filter-monster"><input type="checkbox" data-ft="monster" ${state.filters.monster ? 'checked' : ''}/> Monster</label>
+    <label class="filter-invasion"><input type="checkbox" data-ft="invasion" ${state.filters.invasion ? 'checked' : ''}/> Invasion</label>
+    <label class="filter-battle"><input type="checkbox" data-ft="battle" ${state.filters.battle ? 'checked' : ''}/> Battle</label>
+    <div class="filter-note">⚠️ Lưu ý: Nếu tắt filter, các monster vừa thêm có thể không hiển thị trên bản đồ.</div>
   `;
 
   container.querySelectorAll('input[type=checkbox]').forEach(chk=>{

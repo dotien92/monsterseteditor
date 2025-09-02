@@ -577,9 +577,47 @@ canvas {
   margin-bottom: 8px;
 }
 #mobFilters label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 12px;
   cursor: pointer;
-  user-select: none;
 }
 #mobFilters input {
-  margin-right: 4px;
+  margin: 0;
+}
+/* Màu theo block */
+#mobFilters label.filter-npc {
+  color: var(--npc);
+  border: 1px solid var(--npc);
+  background: color-mix(in srgb, var(--npc) 15%, transparent);
+}
+#mobFilters label.filter-deco {
+  color: var(--deco);
+  border: 1px solid var(--deco);
+  background: color-mix(in srgb, var(--deco) 15%, transparent);
+}
+#mobFilters label.filter-monster {
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+}
+#mobFilters label.filter-battle {
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+}
+#mobFilters label.filter-invasion {
+  color: var(--invasion);
+  border: 1px solid var(--invasion);
+  background: color-mix(in srgb, var(--invasion) 15%, transparent);
+}
+#mobFilters .filter-note {
+  flex-basis: 100%;
+  margin-top: 6px;
+  font-size: 11px;
+  color: #ffb454; /* vàng cam cảnh báo */
+  opacity: 0.85;
 }

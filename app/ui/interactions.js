@@ -113,6 +113,7 @@ export default function bindUI(){
   // hover/drag/resize & sync list
   canvas.addEventListener('mousedown', (ev)=>{
     if(state.currentMapId==null || state.calibrating) return;
+    if(state.addingMonster) return;
     let hit = hitTest(ev, canvas);
     if (!isVisibleByFilter(hit)) hit = null;
     state.selection = hit ? { kind: hit.kind, idx: hit.idx } : null;
@@ -172,7 +173,7 @@ export default function bindUI(){
 
   canvas.addEventListener('mousemove', (ev)=>{
     if(state.currentMapId==null) return;
-
+    if(state.addingMonster) return;
     // không kéo: xử lý hover/cursor
     if(!state.dragging || !state.selection){
       let h = hitTest(ev, canvas);
@@ -269,6 +270,7 @@ export default function bindUI(){
   });
 
   window.addEventListener('mouseup', ()=>{
+    if(state.addingMonster) return;
     state.dragging = null;
     setCursor(canvas, 'crosshair');
   });

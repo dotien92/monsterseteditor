@@ -126,13 +126,14 @@ export function initAddMonsterUI() {
 export function bindCanvasForAddMonster(canvas) {
   if (!canvas) return;
 
+  // ===== MOUSE DOWN =====
   canvas.addEventListener("mousedown", (e) => {
+    // 🟢 Nếu đang paste → xử lý riêng
     if (state.pasting && e.button === 2) {
       state.pasting = false;
       hideTooltip();
       return;
     }
-
     if (state.pasting && state.clipboard && e.button === 0) {
       const { x, y } = pixelToLogic(e.offsetX, e.offsetY, canvas);
       pasteSelection(x, y);
@@ -142,8 +143,62 @@ export function bindCanvasForAddMonster(canvas) {
     }
 
     if (!state.addingMonster) return;
+
     const { x, y } = pixelToLogic(e.offsetX, e.offsetY, canvas);
+    const m = state.addingMonster;
+
+    // 🟢 Block 0 (NPC/Deco) và 4 (Event) → single point, không drag
+    if (m.blockType === 0 || m.blockType === 4) {
+      return;
+    }
+
+    // 🟢 Block 1 (Monster) hoặc 3 (Invasion) với mode single → cũng không drag
+    if ((m.blockType === 1 || m.blockType === 3) && m.addMode === "single") {
+      return;
+    }
+
+    // 🟢 Còn lại (block 1/3 với spot) → cho phép drag để vẽ khung
     state.dragData = { startX: x, startY: y, currentX: x, currentY: y };
+  });
+
+  // ===== MOUSE UP =====
+  canvas.addEventListener("mouseup", (e) => {
+    if (!state.addingMonster) return;
+
+    if (e.button === 2) {
+      state.addingMonster = null;
+      state.dragData = null;
+      hideTooltip();
+      draw(canvas);
+      return;
+    }
+
+    const { x, y } = pixelToLogic(e.offsetX, e.offsetY, canvas);
+    const m = state.addingMonster;
+
+    if (m.blockType === 0 || m.blockType === 4) {
+      // NPC/Deco hoặc Event → point
+      addPointMonster(m.blockType, m.id, x, y, m.range, m.count, m.value, m.dir);
+
+    } else if (m.blockType === 1 || m.blockType === 3) {
+      if (m.addMode === "single") {
+        // Monster/Invasion single → tạo 1 spot lockResize
+        addSpotMonster(m.blockType, m.id, x, y, x, y, m.range, m.count, m.value, m.dir, true);
+      } else {
+        // Monster/Invasion spot → dùng dragData nếu có
+        if (state.dragData) {
+          addSpotMonster(m.blockType, m.id,
+            state.dragData.startX, state.dragData.startY,
+            x, y, m.range, m.count, m.value, m.dir, false
+          );
+          state.dragData = null;
+        } else {
+          addSpotMonster(m.blockType, m.id, x, y, x, y, m.range, m.count, m.value, m.dir, false);
+        }
+      }
+    }
+
+    draw(canvas);
   });
 
   canvas.addEventListener("mousemove", (e) => {
@@ -163,36 +218,7 @@ export function bindCanvasForAddMonster(canvas) {
     if (tooltipEl) tooltipEl.style.display = "block";
   });
 
-  canvas.addEventListener("mouseup", (e) => {
-    if (!state.addingMonster) return;
-    if (e.button === 2) {
-      state.addingMonster = null;
-      state.dragData = null;
-      hideTooltip();
-      draw(canvas);
-      return;
-    }
 
-    const { x, y } = pixelToLogic(e.offsetX, e.offsetY, canvas);
-    const m = state.addingMonster;
-
-    if (m.blockType === 0 || m.blockType === 4) {
-      addPointMonster(m.blockType, m.id, x, y, m.range, m.count, m.value, m.dir);
-    } else {
-      if (m.addMode === "single") {
-        // 🟢 thêm single nhưng lưu như spot: x1=x2, y1=y2
-        addSpotMonster(m.blockType, m.id, x, y, x, y, m.range, m.count, m.value, m.dir, true);
-      } else {
-        if (state.dragData) {
-          addSpotMonster(m.blockType, m.id, state.dragData.startX, state.dragData.startY, x, y, m.range, m.count, m.value, m.dir, false);
-          state.dragData = null;
-        } else {
-          addSpotMonster(m.blockType, m.id, x, y, x, y, m.range, m.count, m.value, m.dir, false);
-        }
-      }
-    }
-    draw(canvas);
-  });
 }
 
 /* ========== MONSTER ADD HELPERS ========== */
@@ -252,11 +278,35 @@ function showTooltip() {
   tooltipEl.style.pointerEvents = "none";
   tooltipEl.style.background = "#222";
   tooltipEl.style.color = "#fff";
-  tooltipEl.style.fontSize = "12px";
-  tooltipEl.style.padding = "2px 6px";
-  tooltipEl.style.borderRadius = "4px";
+  tooltipEl.style.fontSize = "13px";
+  tooltipEl.style.padding = "4px 8px";
+  tooltipEl.style.borderRadius = "6px";
   tooltipEl.style.zIndex = "9999";
-  tooltipEl.innerText = "Click để đặt quái";
+  tooltipEl.style.display = "flex";
+  tooltipEl.style.alignItems = "center";
+  tooltipEl.style.gap = "6px";
+
+  // 🟢 icon tròn có dấu cộng
+  const icon = document.createElement("span");
+  icon.textContent = "+";
+  icon.style.display = "flex";
+  icon.style.alignItems = "center";
+  icon.style.justifyContent = "center";
+  icon.style.width = "16px";
+  icon.style.height = "16px";
+  icon.style.borderRadius = "50%";
+  icon.style.background = "#4caf50"; // nền xanh lá
+  icon.style.color = "#fff";         // dấu cộng trắng
+  icon.style.fontWeight = "bold";
+  icon.style.fontSize = "12px";
+
+  // chữ mô tả
+  const text = document.createElement("span");
+  text.textContent = "Đặt quái";
+
+  tooltipEl.appendChild(icon);
+  tooltipEl.appendChild(text);
+
   document.body.appendChild(tooltipEl);
   document.addEventListener("mousemove", updateTooltip);
 }
@@ -265,8 +315,36 @@ function updateTooltip(e) {
   if (!tooltipEl) return;
   tooltipEl.style.left = e.clientX + 12 + "px";
   tooltipEl.style.top = e.clientY + 12 + "px";
+
   if (state.addingMonster) {
-    tooltipEl.innerText = `Thêm: ${state.classes[state.addingMonster.id]?.name || state.addingMonster.id} (x${state.addingMonster.count || 1})`;
+    const m = state.addingMonster;
+    const monsterName = state.classes[m.id]?.name || m.id;
+    const modeText = m.addMode === "single" ? "Single" : "Spot";
+
+    // lấy màu theo block
+    let color = "#fff";
+    if (m.blockType === 0) {
+      const isDeco = state.decorationIds?.has(m.id);
+      color = isDeco ? getCSS("--deco") : getCSS("--npc");
+    } else if (m.blockType === 1) {
+      color = getCSS("--danger"); // Monster
+    } else if (m.blockType === 3) {
+      color = getCSS("--invasion"); // Invasion
+    } else if (m.blockType === 4) {
+      color = getCSS("--danger"); // Battle event
+    }
+
+    // icon tròn/vuông
+    const shapeIcon = m.addMode === "single"
+      ? `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};margin-left:6px"></span>`
+      : `<span style="display:inline-block;width:10px;height:10px;background:${color};margin-left:6px"></span>`;
+
+    tooltipEl.innerHTML = `
+      <div style="color:${color}; font-weight:600">
+        Add ${modeText} ${shapeIcon}
+      </div>
+      <div>${monsterName} (x${m.count || 1})</div>
+    `;
   }
 }
 
@@ -407,4 +485,8 @@ function refreshUI() {
   const mobList = document.getElementById("mobList");
   if (mobList) refreshMonsterListUI(mobList);
   draw(document.getElementById("view"));
+}
+
+function getCSS(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }

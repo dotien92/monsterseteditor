@@ -129,12 +129,18 @@ function drawOverlay(ctx, data, w, h){
     const x = Math.min(a.px, b.px), y = Math.min(a.py, b.py);
     const ww = Math.abs(a.px - b.px), hh = Math.abs(a.py - b.py);
 
-    if (ww === 0 && hh === 0) {
-      ctx.beginPath();
-      ctx.fillStyle = strokeColor;
-      ctx.arc(x, y, 3, 0, Math.PI * 2);
-      ctx.fill();
-    } else {
+      if (ww === 0 && hh === 0) {
+        ctx.fillStyle = strokeColor;
+        if (s.lockResize) {
+          // single -> hình tròn
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          // spot click -> hình vuông
+          ctx.fillRect(x - 3, y - 3, 6, 6);
+        }
+      } else {
       ctx.strokeStyle = strokeColor;
       ctx.fillStyle   = fillColor;
       ctx.strokeRect(x, y, ww, hh);
