@@ -152,12 +152,21 @@ function drawHover(ctx, data, w, h){
   }else if(state.hover.kind==='spot'){
     const s = data.spots[state.hover.idx];
     if(s){
-      const a=logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
-      const b=logicalToPixel(s.x2 + off.dx, s.y2 + off.dy, w, h);
-      const x=Math.min(a.px,b.px), y=Math.min(a.py,b.py);
-      const ww=Math.abs(a.px-b.px), hh=Math.abs(a.py-b.py);
-      ctx.strokeRect(x,y,ww,hh);
-      ctx.fillRect(x,y,ww,hh);
+      if (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)) {
+        // ✅ single spot → highlight bằng vòng tròn
+        const p = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, 7, 0, Math.PI*2);
+        ctx.stroke();
+      } else {
+        // vùng spot bình thường
+        const a=logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
+        const b=logicalToPixel(s.x2 + off.dx, s.y2 + off.dy, w, h);
+        const x=Math.min(a.px,b.px), y=Math.min(a.py,b.py);
+        const ww=Math.abs(a.px-b.px), hh=Math.abs(a.py-b.py);
+        ctx.strokeRect(x,y,ww,hh);
+        ctx.fillRect(x,y,ww,hh);
+      }
     }
   }
   ctx.restore();

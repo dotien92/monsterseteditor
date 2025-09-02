@@ -82,7 +82,11 @@ function renderGroup(title, singles, spots, kind){
         (m.sourceLine && m.sourceLine > 0)
           ? `<span class="tag">L${m.sourceLine}</span>`
           : `<span class="tag new">NEW</span>`;
-      html += `<li class="list-row" data-kind="${kind}" data-idx="${m.idx}" style="padding:4px 0">
+
+      // ✅ Nếu kind là 'spot' thì single cũng phải dùng data-kind="spot"
+      const dataKind = kind === 'spot' ? 'spot' : 'point';
+
+      html += `<li class="list-row" data-kind="${dataKind}" data-idx="${m.idx}" style="padding:4px 0">
         ${lineLabel} ${nameOf(m.classId)} — (x:${m.x ?? m.x1}, y:${m.y ?? m.y1})
       </li>`;
     });
@@ -123,16 +127,50 @@ export function renderMonsterList(container){
 
   const f = state.filters || { npc:true, decoration:true, monster:true, invasion:true, battle:true };
 
-  // lọc theo filter
-  const npcSingles  = f.npc        ? data.points.filter(p=>p.type==='npc').map((p,i)=>({...p, idx:i})) : [];
-  const decoSingles = f.decoration ? data.points.filter(p=>p.type==='decoration').map((p,i)=>({...p, idx:i})) : [];
-  const battleSingles = f.battle   ? data.points.filter(p=>p.type==='battle').map((p,i)=>({...p, idx:i})) : [];
+  // lọc theo filter, gắn idx = index gốc trong data
+  const npcSingles = f.npc
+    ? data.points
+        .map((p,i)=>({...p, idx:i}))
+        .filter(p=>p.type==='npc')
+    : [];
 
-  const monsterSingles = f.monster ? data.spots.filter(s=>(s.type==='spot' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i})) : [];
-  const monsterSpots   = f.monster ? data.spots.filter(s=>(s.type==='spot' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i})) : [];
+  const decoSingles = f.decoration
+    ? data.points
+        .map((p,i)=>({...p, idx:i}))
+        .filter(p=>p.type==='decoration')
+    : [];
 
-  const invasionSingles = f.invasion ? data.spots.filter(s=>(s.type==='invasion' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i})) : [];
-  const invasionSpots   = f.invasion ? data.spots.filter(s=>(s.type==='invasion' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i})) : [];
+  const battleSingles = f.battle
+    ? data.points
+        .map((p,i)=>({...p, idx:i}))
+        .filter(p=>p.type==='battle')
+    : [];
+
+  // Monster singles & spots
+  const monsterSingles = f.monster
+    ? data.spots
+        .map((s,i)=>({...s, idx:i}))
+        .filter(s => s.type==='spot' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))
+    : [];
+
+  const monsterSpots = f.monster
+    ? data.spots
+        .map((s,i)=>({...s, idx:i}))
+        .filter(s => s.type==='spot' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))
+    : [];
+
+  // Invasion singles & spots
+  const invasionSingles = f.invasion
+    ? data.spots
+        .map((s,i)=>({...s, idx:i}))
+        .filter(s => s.type==='invasion' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))
+    : [];
+
+  const invasionSpots = f.invasion
+    ? data.spots
+        .map((s,i)=>({...s, idx:i}))
+        .filter(s => s.type==='invasion' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))
+    : [];
 
   let html = '';
   html += renderGroup('NPC', npcSingles, [], 'point');
