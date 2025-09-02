@@ -55,8 +55,10 @@ export function updateListHover(container){
 
 export function updateListSelection(container){
   if(!container) return;
-  container.querySelectorAll('.list-row.selected').forEach(el=>el.classList.remove('selected'));
+  container.querySelectorAll('.list-row.selected')
+    .forEach(el=>el.classList.remove('selected'));
   if(!state.selection) return;
+
   const sel = `.list-row[data-kind="${state.selection.kind}"][data-idx="${state.selection.idx}"]`;
   const row = container.querySelector(sel);
   if(row) row.classList.add('selected');
