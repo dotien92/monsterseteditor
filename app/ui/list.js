@@ -61,9 +61,21 @@ export function updateListSelection(container){
 
   const sel = `.list-row[data-kind="${state.selection.kind}"][data-idx="${state.selection.idx}"]`;
   const row = container.querySelector(sel);
-  if(row) row.classList.add('selected');
-  if(row && typeof row.scrollIntoView==='function'){
-    row.scrollIntoView({block:'nearest'});
+  if(row){
+    row.classList.add('selected');
+
+    // 🔽 scroll chỉnh offset (thay cho scrollIntoView)
+    const containerRect = container.getBoundingClientRect();
+    const rowRect = row.getBoundingClientRect();
+    const offset = 50; // tuỳ chỉnh: khoảng cách thêm so với header (px)
+
+    if (rowRect.top < containerRect.top + offset) {
+      // Nếu dòng bị che phía trên
+      container.scrollTop -= (containerRect.top + offset - rowRect.top);
+    } else if (rowRect.bottom > containerRect.bottom) {
+      // Nếu dòng bị che phía dưới
+      container.scrollTop += (rowRect.bottom - containerRect.bottom);
+    }
   }
 }
 
