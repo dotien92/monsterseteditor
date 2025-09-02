@@ -24,6 +24,12 @@ export function initAddMonsterUI() {
         <option value="4">Battle (4)</option>
       </select>
     </label>
+    <label>Kiểu thêm:
+      <select class="addMode">
+        <option value="single">Single</option>
+        <option value="spot">Spot</option>
+      </select>
+    </label>
     <label>Monster:
       <select class="monsterId">${options}</select>
     </label>
@@ -32,9 +38,17 @@ export function initAddMonsterUI() {
   `;
 
   const blockSelect = panel.querySelector(".blockType");
+  const modeSelect = panel.querySelector(".addMode");
   const paramsDiv = panel.querySelector(".params");
 
   function renderParams(blockType) {
+    if (blockType === 0 || blockType === 4) {
+      modeSelect.value = "single";
+      modeSelect.disabled = true;
+    } else {
+      modeSelect.disabled = false;
+    }
+
     let html = "";
     if (blockType === 0) {
       html += `
@@ -65,7 +79,7 @@ export function initAddMonsterUI() {
 
   renderParams(parseInt(blockSelect.value, 10));
 
-   // 🟢 Đổi block type → render lại params + huỷ chế độ thêm nếu đang active
+  // 🟢 Đổi block → render lại params + huỷ chế độ thêm
   blockSelect.addEventListener("change", () => {
     const newBlockType = parseInt(blockSelect.value, 10);
     renderParams(newBlockType);
@@ -79,16 +93,13 @@ export function initAddMonsterUI() {
     }
   });
 
-  // 🟢 Đổi monster → update id trong state.addingMonster nếu đang thêm
+  // 🟢 Đổi monster → update trong state
   const monsterSelect = panel.querySelector(".monsterId");
   monsterSelect.addEventListener("change", () => {
     const newMonsterId = parseInt(monsterSelect.value, 10);
-
     if (state.addingMonster) {
       state.addingMonster.id = newMonsterId;
       console.log("🔄 Đổi monster khi đang thêm:", state.addingMonster);
-
-      // cập nhật tooltip ngay để thấy tên quái mới
       if (state.lastMouse) {
         updateTooltip({ clientX: state.lastMouse.x, clientY: state.lastMouse.y });
       }
@@ -97,13 +108,14 @@ export function initAddMonsterUI() {
 
   panel.querySelector(".addBtn").onclick = () => {
     const blockType = parseInt(blockSelect.value, 10);
+    const addMode = modeSelect.value; // 🟢 lấy kiểu thêm
     const monsterId = parseInt(panel.querySelector(".monsterId").value, 10);
     const range = panel.querySelector(".range") ? parseInt(panel.querySelector(".range").value, 10) : 0;
     const count = panel.querySelector(".count") ? parseInt(panel.querySelector(".count").value, 10) : 1;
     const value = panel.querySelector(".value") ? parseInt(panel.querySelector(".value").value, 10) : 0;
     const dir = panel.querySelector(".dir") ? parseInt(panel.querySelector(".dir").value, 10) : 0;
 
-    state.addingMonster = { blockType, id: monsterId, range, count, value, dir };
+    state.addingMonster = { blockType, addMode, id: monsterId, range, count, value, dir };
     console.log("👉 Ready to add monster:", state.addingMonster);
 
     showTooltip();
@@ -115,15 +127,12 @@ export function bindCanvasForAddMonster(canvas) {
   if (!canvas) return;
 
   canvas.addEventListener("mousedown", (e) => {
-    // Huỷ paste bằng chuột phải
     if (state.pasting && e.button === 2) {
-      console.log("❌ Huỷ paste mode (right click)");
       state.pasting = false;
       hideTooltip();
       return;
     }
 
-    // Thực hiện paste bằng chuột trái
     if (state.pasting && state.clipboard && e.button === 0) {
       const { x, y } = pixelToLogic(e.offsetX, e.offsetY, canvas);
       pasteSelection(x, y);
@@ -134,39 +143,29 @@ export function bindCanvasForAddMonster(canvas) {
 
     if (!state.addingMonster) return;
     const { x, y } = pixelToLogic(e.offsetX, e.offsetY, canvas);
-
-    // bắt đầu kéo
     state.dragData = { startX: x, startY: y, currentX: x, currentY: y };
-    console.log("👉 mousedown event chạy", state.addingMonster);
   });
 
   canvas.addEventListener("mousemove", (e) => {
-    // preview khi kéo spot
     if (state.addingMonster && state.dragData) {
       const { x, y } = pixelToLogic(e.offsetX, e.offsetY, canvas);
       state.dragData.currentX = x;
       state.dragData.currentY = y;
       draw(canvas);
     }
-
-    // track mouse cho tooltip/paste
     state.lastMouse = { x: e.clientX, y: e.clientY };
   });
 
-  // 🟢 Khi chuột rời canvas → ẩn tooltip
   canvas.addEventListener("mouseleave", () => {
     if (tooltipEl) tooltipEl.style.display = "none";
   });
-
-  // 🟢 Khi chuột vào lại canvas → hiện tooltip (nếu đang thêm/paste)
   canvas.addEventListener("mouseenter", () => {
     if (tooltipEl) tooltipEl.style.display = "block";
   });
 
   canvas.addEventListener("mouseup", (e) => {
     if (!state.addingMonster) return;
-    if (e.button === 2) { // Chuột phải hủy
-      console.log("❌ Huỷ chế độ thêm quái (right click)");
+    if (e.button === 2) {
       state.addingMonster = null;
       state.dragData = null;
       hideTooltip();
@@ -180,14 +179,18 @@ export function bindCanvasForAddMonster(canvas) {
     if (m.blockType === 0 || m.blockType === 4) {
       addPointMonster(m.blockType, m.id, x, y, m.range, m.count, m.value, m.dir);
     } else {
-      if (state.dragData) {
-        addSpotMonster(m.blockType, m.id, state.dragData.startX, state.dragData.startY, x, y, m.range, m.count, m.value, m.dir);
-        state.dragData = null;
+      if (m.addMode === "single") {
+        // 🟢 thêm single nhưng lưu như spot: x1=x2, y1=y2
+        addSpotMonster(m.blockType, m.id, x, y, x, y, m.range, m.count, m.value, m.dir, true);
       } else {
-        addSpotMonster(m.blockType, m.id, x, y, x, y, m.range, m.count, m.value, m.dir);
+        if (state.dragData) {
+          addSpotMonster(m.blockType, m.id, state.dragData.startX, state.dragData.startY, x, y, m.range, m.count, m.value, m.dir, false);
+          state.dragData = null;
+        } else {
+          addSpotMonster(m.blockType, m.id, x, y, x, y, m.range, m.count, m.value, m.dir, false);
+        }
       }
     }
-
     draw(canvas);
   });
 }
@@ -204,40 +207,27 @@ function addPointMonster(blockType, id, x, y, range, count, value, dir) {
   }
 
   saveHistory();
-  state.selection = null;
-  state.hover = null;
-  const mobList = document.getElementById("mobList");
-  if (mobList) refreshMonsterListUI(mobList);
-  draw(document.getElementById("view"));
+  refreshUI();
 }
 
-function addSpotMonster(blockType, id, x1, y1, x2, y2, range, count, value, dir) {
+function addSpotMonster(blockType, id, x1, y1, x2, y2, range, count, value, dir, lockResize=false) {
   const mapId = state.currentMapId;
   const data = state.monstersByMap[mapId] ||= { points: [], spots: [] };
 
   if (blockType === 1) {
     data.spots.push({
-      classId: id,
-      x1, y1, x2, y2, dir, range, count, value,
-      type: "spot",
-      isNPC: false,
-      sourceLine: "New"
+      classId: id, x1, y1, x2, y2, dir, range, count, value,
+      type: "spot", isNPC: false, sourceLine: "New", lockResize
     });
   } else if (blockType === 3) {
     data.spots.push({
       classId: id, x1, y1, x2, y2, dir, range, count, value,
-      type: "invasion",
-      isNPC: false,
-      sourceLine: "New"
+      type: "invasion", isNPC: false, sourceLine: "New", lockResize
     });
   }
 
   saveHistory();
-  state.selection = null;
-  state.hover = null;
-  const mobList = document.getElementById("mobList");
-  if (mobList) refreshMonsterListUI(mobList);
-  draw(document.getElementById("view"));
+  refreshUI();
 }
 
 /* ========== TOOLTIP ========== */
@@ -261,7 +251,6 @@ function updateTooltip(e) {
   if (!tooltipEl) return;
   tooltipEl.style.left = e.clientX + 12 + "px";
   tooltipEl.style.top = e.clientY + 12 + "px";
-
   if (state.addingMonster) {
     tooltipEl.innerText = `Thêm: ${state.classes[state.addingMonster.id]?.name || state.addingMonster.id} (x${state.addingMonster.count || 1})`;
   }
@@ -286,7 +275,6 @@ function showPasteTooltip() {
   tooltipEl.style.zIndex = "9999";
   tooltipEl.innerText = "Click để dán quái";
   document.body.appendChild(tooltipEl);
-
   document.addEventListener("mousemove", updateTooltip);
 }
 
@@ -296,12 +284,9 @@ function saveHistory() {
   state.history.push(snapshot);
   state.future = [];
 }
-
 function restoreFrom(snapshot) {
   state.monstersByMap = JSON.parse(snapshot);
-  const mobList = document.getElementById("mobList");
-  if (mobList) refreshMonsterListUI(mobList);
-  draw(document.getElementById("view"));
+  refreshUI();
 }
 
 /* ========== COPY/PASTE/DELETE ========== */
@@ -309,20 +294,16 @@ function copySelection() {
   if (!state.selection || state.currentMapId == null) return;
   const mapData = state.monstersByMap[state.currentMapId];
   if (!mapData) return;
-
   if (state.selection.kind === "point") {
     state.clipboard = { ...mapData.points[state.selection.idx], kind: "point" };
   } else if (state.selection.kind === "spot") {
     state.clipboard = { ...mapData.spots[state.selection.idx], kind: "spot" };
   }
-  console.log("📋 Copied:", state.clipboard);
 }
-
 function pasteSelection(x, y) {
   if (!state.clipboard || state.currentMapId == null) return;
   const data = state.monstersByMap[state.currentMapId] ||= { points: [], spots: [] };
   const c = { ...state.clipboard };
-
   if (c.kind === "point") {
     c.x = x; c.y = y; c.sourceLine = "New";
     data.points.push(c);
@@ -333,41 +314,29 @@ function pasteSelection(x, y) {
     c.sourceLine = "New";
     data.spots.push(c);
   }
-
-  console.log("📋 Pasted:", c);
   saveHistory();
-  const mobList = document.getElementById("mobList");
-  if (mobList) refreshMonsterListUI(mobList);
-  draw(document.getElementById("view"));
+  refreshUI();
 }
-
 function deleteSelection() {
   if (!state.selection || state.currentMapId == null) return;
   const data = state.monstersByMap[state.currentMapId];
   if (!data) return;
-
   if (state.selection.kind === "point") {
     data.points.splice(state.selection.idx, 1);
   } else if (state.selection.kind === "spot") {
     data.spots.splice(state.selection.idx, 1);
   }
-
   state.selection = null;
   saveHistory();
-  const mobList = document.getElementById("mobList");
-  if (mobList) refreshMonsterListUI(mobList);
-  draw(document.getElementById("view"));
-  console.log("🗑️ Deleted selection");
+  refreshUI();
 }
 
 /* ========== KEYBOARD SHORTCUTS ========== */
 document.addEventListener("keydown", (e) => {
   const isMod = e.ctrlKey || e.metaKey;
   const key = e.key.toLowerCase();
-
   if (key === "escape") {
     if (state.addingMonster) {
-      console.log("❌ Huỷ chế độ thêm quái (ESC)");
       state.addingMonster = null;
       state.dragData = null;
       hideTooltip();
@@ -376,7 +345,6 @@ document.addEventListener("keydown", (e) => {
       return;
     }
     if (state.pasting) {
-      console.log("❌ Huỷ paste mode (ESC)");
       state.pasting = false;
       hideTooltip();
       e.preventDefault();
@@ -388,7 +356,6 @@ document.addEventListener("keydown", (e) => {
     if (snap) {
       state.future.push(JSON.stringify(state.monstersByMap));
       restoreFrom(snap);
-      console.log("↩️ Undo");
     }
     e.preventDefault();
   } else if (isMod && ((key === "y") || (key === "z" && e.shiftKey))) {
@@ -396,33 +363,34 @@ document.addEventListener("keydown", (e) => {
     if (snap) {
       state.history.push(JSON.stringify(state.monstersByMap));
       restoreFrom(snap);
-      console.log("↪️ Redo");
     }
     e.preventDefault();
   } else if (isMod && key === "c") {
-    copySelection();
-    e.preventDefault();
+    copySelection(); e.preventDefault();
   } else if (isMod && key === "v") {
     if (state.clipboard) {
       state.pasting = true;
       showPasteTooltip();
-      console.log("📋 Paste mode: click lên map để dán");
     }
     e.preventDefault();
   } else if (key === "delete" || key === "backspace") {
-    deleteSelection();
-    e.preventDefault();
+    deleteSelection(); e.preventDefault();
   }
 });
 
 document.addEventListener("contextmenu", (e) => {
-  if (state.addingMonster) {
-    e.preventDefault();
-  }
+  if (state.addingMonster) e.preventDefault();
 });
 
 /* ========== UTILS ========== */
 function pixelToLogic(px, py, canvas) {
   const w = canvas.width, h = canvas.height, g = CONFIG.GRID_SIZE;
   return { x: Math.floor((py * g) / h), y: Math.floor((px * g) / w) };
+}
+function refreshUI() {
+  state.selection = null;
+  state.hover = null;
+  const mobList = document.getElementById("mobList");
+  if (mobList) refreshMonsterListUI(mobList);
+  draw(document.getElementById("view"));
 }

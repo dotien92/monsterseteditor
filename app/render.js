@@ -84,19 +84,28 @@ function drawOverlay(ctx, data, w, h){
   // spots
   ctx.lineWidth=1;
   for (const s of data.spots) {
+    if (s.lockResize) {
+      // 🔒 Single từ block 1/3 → vẽ chấm đỏ tại x1,y1
+      const p = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
+      ctx.beginPath();
+      ctx.fillStyle = getCSS('--danger');
+      ctx.arc(p.px, p.py, 3, 0, Math.PI * 2);
+      ctx.fill();
+      continue; // bỏ qua xử lý spot thường
+    }
+
     const a = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
     const b = logicalToPixel(s.x2 + off.dx, s.y2 + off.dy, w, h);
     const x = Math.min(a.px, b.px), y = Math.min(a.py, b.py);
     const ww = Math.abs(a.px - b.px), hh = Math.abs(a.py - b.py);
 
     if (ww === 0 && hh === 0) {
-      // ✅ single từ block 1/3/4 → vẽ chấm đỏ
+      // fallback: single cũ
       ctx.beginPath();
       ctx.fillStyle = getCSS('--danger');
       ctx.arc(x, y, 3, 0, Math.PI * 2);
       ctx.fill();
     } else {
-      // Vùng spot bình thường
       ctx.strokeStyle = getCSS('--spot');
       ctx.fillStyle = hexWithAlpha(getCSS('--spot'), 0.3);
       ctx.strokeRect(x, y, ww, hh);
@@ -157,16 +166,26 @@ function drawSelection(ctx, data, w, h){
   } else if (state.selection.kind==='spot'){
     const s = data.spots[state.selection.idx];
     if(!s) { ctx.restore(); return; }
-    const a=logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
-    const b=logicalToPixel(s.x2 + off.dx, s.y2 + off.dy, w, h);
-    const x=Math.min(a.px,b.px), y=Math.min(a.py,b.py);
-    const ww=Math.abs(a.px-b.px), hh=Math.abs(a.py-b.py);
-    ctx.strokeRect(x,y,ww,hh);
-    // 4 tay cầm
-    drawHandle(ctx, x, y);
-    drawHandle(ctx, x+ww, y);
-    drawHandle(ctx, x, y+hh);
-    drawHandle(ctx, x+ww, y+hh);
+
+    if(s.lockResize){
+      // 🔒 single spot → vẽ giống point
+      const p = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
+      ctx.beginPath();
+      ctx.arc(p.px, p.py, 6, 0, Math.PI*2);
+      ctx.stroke();
+    } else {
+      const a=logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
+      const b=logicalToPixel(s.x2 + off.dx, s.y2 + off.dy, w, h);
+      const x=Math.min(a.px,b.px), y=Math.min(a.py,b.py);
+      const ww=Math.abs(a.px-b.px), hh=Math.abs(a.py-b.py);
+      ctx.strokeRect(x,y,ww,hh);
+
+      // 4 tay cầm
+      drawHandle(ctx, x, y);
+      drawHandle(ctx, x+ww, y);
+      drawHandle(ctx, x, y+hh);
+      drawHandle(ctx, x+ww, y+hh);
+    }
   }
   ctx.restore();
 }

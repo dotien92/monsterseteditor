@@ -94,37 +94,46 @@ export default function bindUI(){
       if(hit.kind==='spot' && hit.resize){
         const mapId = state.currentMapId;
         const s = state.monstersByMap[mapId]?.spots[hit.idx];
-        if(s){
-          const minX = Math.min(s.x1, s.x2), maxX = Math.max(s.x1, s.x2);
-          const minY = Math.min(s.y1, s.y2), maxY = Math.max(s.y1, s.y2);
-          let ax, ay;
-          if(hit.resize==='tl'){ ax = maxX; ay = maxY; }
-          if(hit.resize==='tr'){ ax = maxX; ay = minY; }
-          if(hit.resize==='bl'){ ax = minX; ay = maxY; }
-          if(hit.resize==='br'){ ax = minX; ay = minY; }
-          state.dragging = { mode:'resize', corner: hit.resize, anchor:{ ax, ay } };
-        }else{
-          state.dragging = { mode:'resize', corner: hit.resize };
+        if(s?.lockResize){
+          console.log("🔒 Spot này bị khoá resize, chỉ cho phép move");
+          // bỏ qua resize, xử lý move ở nhánh else
+        } else {
+          // xử lý resize bình thường
+          if(s){
+            const minX = Math.min(s.x1, s.x2), maxX = Math.max(s.x1, s.x2);
+            const minY = Math.min(s.y1, s.y2), maxY = Math.max(s.y1, s.y2);
+            let ax, ay;
+            if(hit.resize==='tl'){ ax = maxX; ay = maxY; }
+            if(hit.resize==='tr'){ ax = maxX; ay = minY; }
+            if(hit.resize==='bl'){ ax = minX; ay = maxY; }
+            if(hit.resize==='br'){ ax = minX; ay = minY; }
+            state.dragging = { mode:'resize', corner: hit.resize, anchor:{ ax, ay } };
+          }else{
+            state.dragging = { mode:'resize', corner: hit.resize };
+          }
+          state.hover = null;
+          setCursor(canvas, resizeCursorFor(hit.resize));
+          redraw();
+          return;
         }
-        state.hover = null;
-        setCursor(canvas, resizeCursorFor(hit.resize));
-      }else{
-        const mapId = state.currentMapId;
-        const data = state.monstersByMap[mapId];
-        const s = hit.kind==='spot' ? data?.spots?.[hit.idx] : null;
-        if(s){
-          const { Xc, Yc } = gridFromMouse(ev, canvas);
-          const { xr, yr } = rawFromCalibrated(Xc, Yc);
-          const minX = Math.min(s.x1, s.x2), minY = Math.min(s.y1, s.y2);
-          const w = Math.abs(s.x2 - s.x1), h = Math.abs(s.y2 - s.y1);
-          const ox = xr - minX, oy = yr - minY;
-          state.dragging = { mode:'move', grab:{ ox, oy, w, h } };
-        }else{
-          state.dragging = { mode:'move' };
-        }
-        state.hover = null;
-        setCursor(canvas, 'grabbing');
       }
+
+      // 🟢 Move (spot/point hoặc spot có lockResize)
+      const mapId = state.currentMapId;
+      const data = state.monstersByMap[mapId];
+      const s = hit.kind==='spot' ? data?.spots?.[hit.idx] : null;
+      if(s){
+        const { Xc, Yc } = gridFromMouse(ev, canvas);
+        const { xr, yr } = rawFromCalibrated(Xc, Yc);
+        const minX = Math.min(s.x1, s.x2), minY = Math.min(s.y1, s.y2);
+        const w = Math.abs(s.x2 - s.x1), h = Math.abs(s.y2 - s.y1);
+        const ox = xr - minX, oy = yr - minY;
+        state.dragging = { mode:'move', grab:{ ox, oy, w, h } };
+      }else{
+        state.dragging = { mode:'move' };
+      }
+      state.hover = null;
+      setCursor(canvas, 'grabbing');
     }else{
       state.dragging = null;
       setCursor(canvas, 'crosshair');
@@ -139,7 +148,13 @@ export default function bindUI(){
     if(!state.dragging || !state.selection){
       const h = hitTest(ev, canvas);
       if(h && h.kind==='spot' && h.resize){
-        setCursor(canvas, resizeCursorFor(h.resize));
+        const mapId = state.currentMapId;
+        const s = state.monstersByMap[mapId]?.spots[h.idx];
+        if(s?.lockResize){
+          setCursor(canvas, 'crosshair'); // ❌ không cho resize
+        } else {
+          setCursor(canvas, resizeCursorFor(h.resize));
+        }
       } else {
         setCursor(canvas, 'crosshair');
       }
@@ -191,6 +206,10 @@ export default function bindUI(){
           s.y1 = gclamp(minY); s.y2 = gclamp(maxY);
         }
       }else if(state.dragging.mode==='resize'){
+        if(s.lockResize){
+          console.log("🔒 Không thể resize spot này");
+          return;
+        }
         const { ax, ay } = (state.dragging.anchor || {});
         if(ax==null || ay==null){
           const corner = state.dragging.corner;
