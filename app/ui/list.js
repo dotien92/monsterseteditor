@@ -30,6 +30,42 @@ export function updateListSelection(container){
   }
 }
 
+function renderGroup(title, singles, spots, kind){
+  let html = `<div class="group"><div class="group-title">${title}</div>`;
+
+  // Single
+  html += `<div class="subgroup"><div class="sub-title">Single (${singles.length})</div>`;
+  if(singles.length){
+    html += '<ul style="list-style:none; margin:0; padding:0 8px 6px 8px">';
+    singles.forEach((m)=>{
+      const lineLabel =
+        (m.sourceLine && m.sourceLine > 0)
+          ? `<span class="tag">L${m.sourceLine}</span>`
+          : `<span class="tag new">NEW</span>`;
+      html += `<li class="list-row" data-kind="${kind}" data-idx="${m.idx}" style="padding:4px 0">${lineLabel} ${nameOf(m.classId)} — (x:${m.x ?? m.x1}, y:${m.y ?? m.y1})</li>`;
+    });
+    html += '</ul>';
+  }
+  html += '</div>';
+
+  // Spot (render **chỉ khi có**)
+  if(spots.length){
+    html += `<div class="subgroup"><div class="sub-title">Spot (${spots.length})</div>`;
+    html += '<ul style="list-style:none; margin:0; padding:0 8px 6px 8px">';
+    spots.forEach((m)=>{
+      const lineLabel =
+        (m.sourceLine && m.sourceLine > 0)
+          ? `<span class="tag">L${m.sourceLine}</span>`
+          : `<span class="tag new">NEW</span>`;
+      html += `<li class="list-row" data-kind="spot" data-idx="${m.idx}" style="padding:4px 0">${lineLabel} ${nameOf(m.classId)} — (x1:${m.x1}, y1:${m.y1}) → (x2:${m.x2}, y2:${m.y2})</li>`;
+    });
+    html += '</ul></div>';
+  }
+
+  html += '</div>'; // end group
+  return html;
+}
+
 export function renderMonsterList(container){
   const mapId = state.currentMapId;
   if(mapId == null){
@@ -42,46 +78,23 @@ export function renderMonsterList(container){
     return;
   }
 
+  // Phân loại
+  const npcSingles = data.points.filter((p,i)=>p.type==='npc').map((p,i)=>({...p, idx:i}));
+  const battleSingles = data.points.filter((p,i)=>p.type==='battle').map((p,i)=>({...p, idx:i}));
+
+  const monsterSingles = data.spots.filter((s,i)=>(s.type==='spot' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
+  const monsterSpots   = data.spots.filter((s,i)=>(s.type==='spot' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
+
+  const invasionSingles = data.spots.filter((s,i)=>(s.type==='invasion' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
+  const invasionSpots   = data.spots.filter((s,i)=>(s.type==='invasion' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
+
+  const battleSpots = []; // block 4 không có spot
+
   let html = '';
-
-  // Points
-  html += '<div class="muted" style="padding:6px 8px">Điểm (single): ' + (data.points.length || 0) + '</div>';
-  if(data.points.length){
-    html += '<ul style="list-style:none; margin:0; padding:0 8px 6px 8px">';
-    data.points.forEach((p,i)=>{
-      const tag = p.type === 'npc'
-        ? '<span style="margin-left:6px;font-size:11px;opacity:.85">[NPC]</span>'
-        : '';
-
-      const lineLabel =
-        (p.sourceLine && p.sourceLine > 0)
-          ? `<span class="tag">L${p.sourceLine}</span>`
-          : `<span class="tag new">NEW</span>`;
-
-      html += `<li class="list-row" data-kind="point" data-idx="${i}" style="padding:4px 0">${lineLabel} ${nameOf(p.classId)} ${tag} — (x:${p.x}, y:${p.y})</li>`;
-    });
-    html += '</ul>';
-  }
-
-  // Spots
-  html += '<div class="muted" style="padding:6px 8px">Vùng (spot/invasion/event): ' + (data.spots.length || 0) + '</div>';
-  if(data.spots.length){
-    html += '<ul style="list-style:none; margin:0; padding:0 8px 8px 8px">';
-    data.spots.forEach((s,i)=>{
-      let tag = '';
-      if(s.type === 'invasion') tag = '[Invasion]';
-      else if(s.type === 'event') tag = '[Event]';
-      else if(s.type === 'spot') tag = '[Spot]';
-
-      const lineLabel =
-        (s.sourceLine && s.sourceLine > 0)
-          ? `<span class="tag">L${s.sourceLine}</span>`
-          : `<span class="tag new">NEW</span>`;
-
-      html += `<li class="list-row" data-kind="spot" data-idx="${i}" style="padding:4px 0">${lineLabel} ${nameOf(s.classId)} ${tag} — (x1:${s.x1}, y1:${s.y1}) → (x2:${s.x2}, y2:${s.y2})</li>`;
-    });
-    html += '</ul>';
-  }
+  html += renderGroup('NPC (0)', npcSingles, [], 'point');
+  html += renderGroup('Monster (1)', monsterSingles, monsterSpots, 'spot');
+  html += renderGroup('Invasion (3)', invasionSingles, invasionSpots, 'spot');
+  html += renderGroup('Battle (4)', battleSingles, battleSpots, 'point');
 
   container.innerHTML = html || '<div class="muted" style="padding:8px">Không có dữ liệu.</div>';
 

@@ -420,9 +420,10 @@ canvas {
   border-radius: 8px;
   background: #0f0f19;
   font-size: 12px;
-  max-height: 220px;
-  overflow-y: auto;
+  max-height: 440px;   /* cao gấp đôi */
+  overflow-y: auto;    /* chính nó scroll luôn */
   margin-top: 6px;
+  position: relative;  /* cho sticky hoạt động */
 }
 
 /* Item trong danh sách */
@@ -432,19 +433,17 @@ canvas {
   cursor: pointer;
   transition: background-color 0.12s ease;
 }
-
 #mobList .list-row:last-child {
   border-bottom: none;
 }
-
 #mobList .list-row:hover {
   background: rgba(136, 224, 255, 0.08);
 }
-
 #mobList .list-row.selected {
   background: rgba(102, 217, 255, 0.18);
   outline: 1px solid rgba(102, 217, 255, 0.35);
 }
+
 
 /* Label và tag trong list */
 #mobList .mob-name {
@@ -458,7 +457,7 @@ canvas {
   margin-top: 2px;
 }
 
-/* Scrollbar tuỳ chỉnh cho đồng bộ */
+/* Scrollbar tuỳ chỉnh */
 #mobList::-webkit-scrollbar {
   width: 6px;
 }
@@ -506,4 +505,39 @@ canvas {
   border-color: #2d7a46;
   background: rgba(46, 204, 113, 0.15);
   color: #2ecc71;
+}
+
+/* ===== Monster List Grouping ===== */
+#mobList .group {
+  border: 1px solid #2a2a43;
+  border-radius: 6px;
+  margin: 8px;
+  background: #141420;
+}
+#mobList .group-title {
+  font-weight: bold;
+  padding: 6px 10px;
+  background: #1d1d2b;
+  border-bottom: 1px solid #2a2a43;
+  color: #cbd5e1;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4); /* 👈 thêm bóng mờ */
+}
+#mobList .subgroup {
+  padding: 4px 0;
+}
+#mobList .sub-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9aa0ac;
+  padding: 4px 10px;
+  border-left: 3px solid #2a2a43;
+  margin: 2px 0;
+  position: sticky;
+  top: 27px; /* đặt ngay dưới group-title */
+  background: #141420;
+  z-index: 4;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35); /* 👈 thêm bóng mờ */
 }
