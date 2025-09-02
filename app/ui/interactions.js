@@ -14,6 +14,10 @@ import { renderMapStats } from './stats.js';   // ✅ thêm
 
 const gclamp = (v)=> Math.max(0, Math.min(CONFIG.GRID_SIZE - 1, Math.round(v)));
 
+function refreshMobList(mobList) {
+  if (mobList) renderMonsterList(mobList);
+}
+
 export default function bindUI(){
   const mapSelect    = document.querySelector('#mapSelect');
   const canvas       = byId('view');
@@ -232,6 +236,8 @@ export default function bindUI(){
       }
     }
 
+    // 🟢 refresh UI ngay khi kéo
+    refreshMobList(mobList);
     renderInfoPanel(infoPanel);
     redraw();
   });
