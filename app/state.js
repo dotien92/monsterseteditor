@@ -3,7 +3,7 @@ export const state = {
   monstersByMap: /** @type {Record<number,{points:Array,spots:Array}>} */({}),
   classes: /** @type {Record<number,{name:string}>} */({}),
   currentMapId: null,
-  viewScale: 1.0, // 25–100%
+  viewScale: 0.8, // 25–100%
   calibrationByMap: /** @type {Record<number,{dx:number,dy:number}>} */({}), // offset (grid) theo map
   calibrating: false,
 

@@ -12,7 +12,7 @@ export function draw(canvas){
 
   const imgEntry = state.images.find(i=>i.mapId===state.currentMapId);
   const data = state.monstersByMap[state.currentMapId];
-  const scale = state.viewScale ?? 1.0;
+  const scale = state.viewScale ?? 0.8;
 
   if(!imgEntry){
     const baseW = 1024, baseH = 1024;
