@@ -82,42 +82,44 @@ export function updateListSelection(container){
 
 /* ========== RENDER GROUP ========== */
 function renderGroup(title, singles, spots, kind){
-  // nếu cả singles và spots đều trống thì không render gì
   if ((!singles || !singles.length) && (!spots || !spots.length)) {
     return '';
   }
 
   let html = `<div class="group"><div class="group-title">${title}</div>`;
 
+  // --- Singles ---
   if (singles && singles.length){
     html += `<div class="subgroup"><div class="sub-title">Single (${singles.length})</div>`;
     html += '<ul style="list-style:none; margin:0; padding:0 8px 6px 8px">';
     singles.forEach((m)=>{
-      const lineLabel =
-        (m.sourceLine && m.sourceLine > 0)
-          ? `<span class="tag">L${m.sourceLine}</span>`
-          : `<span class="tag new">NEW</span>`;
+      const lineLabel = (m.sourceLine && m.sourceLine > 0)
+        ? `<span class="tag">L${m.sourceLine}</span>`
+        : `<span class="tag new">NEW</span>`;
 
-      // ✅ Nếu kind là 'spot' thì single cũng phải dùng data-kind="spot"
       const dataKind = kind === 'spot' ? 'spot' : 'point';
+      const coords = `(${m.x ?? m.x1}, ${m.y ?? m.y1})`;
 
       html += `<li class="list-row" data-kind="${dataKind}" data-idx="${m.idx}" style="padding:4px 0">
-        ${lineLabel} ${nameOf(m.classId)} — (x:${m.x ?? m.x1}, y:${m.y ?? m.y1})
+        ${lineLabel} ${nameOf(m.classId)} — ${coords}
       </li>`;
     });
     html += '</ul></div>';
   }
 
+  // --- Spots ---
   if (spots && spots.length){
     html += `<div class="subgroup"><div class="sub-title">Spot (${spots.length})</div>`;
     html += '<ul style="list-style:none; margin:0; padding:0 8px 6px 8px">';
     spots.forEach((m)=>{
-      const lineLabel =
-        (m.sourceLine && m.sourceLine > 0)
-          ? `<span class="tag">L${m.sourceLine}</span>`
-          : `<span class="tag new">NEW</span>`;
+      const lineLabel = (m.sourceLine && m.sourceLine > 0)
+        ? `<span class="tag">L${m.sourceLine}</span>`
+        : `<span class="tag new">NEW</span>`;
+
+      const coords = `(${m.x1}, ${m.y1}) → (${m.x2}, ${m.y2})`;
+
       html += `<li class="list-row" data-kind="spot" data-idx="${m.idx}" style="padding:4px 0">
-        ${lineLabel} ${nameOf(m.classId)} — (x1:${m.x1}, y1:${m.y1}) → (x2:${m.x2}, y2:${m.y2})
+        ${lineLabel} ${nameOf(m.classId)} — ${coords}
       </li>`;
     });
     html += '</ul></div>';
@@ -144,47 +146,33 @@ export function renderMonsterList(container){
 
   // lọc theo filter, gắn idx = index gốc trong data
   const npcSingles = f.npc
-    ? data.points
-        .map((p,i)=>({...p, idx:i}))
-        .filter(p=>p.type==='npc')
+    ? data.points.map((p,i)=>({...p, idx:i})).filter(p=>p.type==='npc')
     : [];
 
   const decoSingles = f.decoration
-    ? data.points
-        .map((p,i)=>({...p, idx:i}))
-        .filter(p=>p.type==='decoration')
+    ? data.points.map((p,i)=>({...p, idx:i})).filter(p=>p.type==='decoration')
     : [];
 
   const battleSingles = f.battle
-    ? data.points
-        .map((p,i)=>({...p, idx:i}))
-        .filter(p=>p.type==='battle')
+    ? data.points.map((p,i)=>({...p, idx:i})).filter(p=>p.type==='battle')
     : [];
 
   // Monster singles & spots
   const monsterSingles = f.monster
-    ? data.spots
-        .map((s,i)=>({...s, idx:i}))
-        .filter(s => s.type==='spot' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))
+    ? data.spots.map((s,i)=>({...s, idx:i})).filter(s => s.type==='spot' && s.lockResize)
     : [];
 
   const monsterSpots = f.monster
-    ? data.spots
-        .map((s,i)=>({...s, idx:i}))
-        .filter(s => s.type==='spot' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))
+    ? data.spots.map((s,i)=>({...s, idx:i})).filter(s => s.type==='spot' && !s.lockResize)
     : [];
 
   // Invasion singles & spots
   const invasionSingles = f.invasion
-    ? data.spots
-        .map((s,i)=>({...s, idx:i}))
-        .filter(s => s.type==='invasion' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))
+    ? data.spots.map((s,i)=>({...s, idx:i})).filter(s => s.type==='invasion' && s.lockResize)
     : [];
 
   const invasionSpots = f.invasion
-    ? data.spots
-        .map((s,i)=>({...s, idx:i}))
-        .filter(s => s.type==='invasion' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))
+    ? data.spots.map((s,i)=>({...s, idx:i})).filter(s => s.type==='invasion' && !s.lockResize)
     : [];
 
   let html = '';
