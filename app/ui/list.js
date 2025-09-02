@@ -67,6 +67,11 @@ export function updateListSelection(container){
 
 /* ========== RENDER GROUP ========== */
 function renderGroup(title, singles, spots, kind){
+  // nếu cả singles và spots đều trống thì không render gì
+  if ((!singles || !singles.length) && (!spots || !spots.length)) {
+    return '';
+  }
+
   let html = `<div class="group"><div class="group-title">${title}</div>`;
 
   if (singles && singles.length){
@@ -77,7 +82,9 @@ function renderGroup(title, singles, spots, kind){
         (m.sourceLine && m.sourceLine > 0)
           ? `<span class="tag">L${m.sourceLine}</span>`
           : `<span class="tag new">NEW</span>`;
-      html += `<li class="list-row" data-kind="${kind}" data-idx="${m.idx}" style="padding:4px 0">${lineLabel} ${nameOf(m.classId)} — (x:${m.x ?? m.x1}, y:${m.y ?? m.y1})</li>`;
+      html += `<li class="list-row" data-kind="${kind}" data-idx="${m.idx}" style="padding:4px 0">
+        ${lineLabel} ${nameOf(m.classId)} — (x:${m.x ?? m.x1}, y:${m.y ?? m.y1})
+      </li>`;
     });
     html += '</ul></div>';
   }
@@ -90,7 +97,9 @@ function renderGroup(title, singles, spots, kind){
         (m.sourceLine && m.sourceLine > 0)
           ? `<span class="tag">L${m.sourceLine}</span>`
           : `<span class="tag new">NEW</span>`;
-      html += `<li class="list-row" data-kind="spot" data-idx="${m.idx}" style="padding:4px 0">${lineLabel} ${nameOf(m.classId)} — (x1:${m.x1}, y1:${m.y1}) → (x2:${m.x2}, y2:${m.y2})</li>`;
+      html += `<li class="list-row" data-kind="spot" data-idx="${m.idx}" style="padding:4px 0">
+        ${lineLabel} ${nameOf(m.classId)} — (x1:${m.x1}, y1:${m.y1}) → (x2:${m.x2}, y2:${m.y2})
+      </li>`;
     });
     html += '</ul></div>';
   }
