@@ -73,8 +73,17 @@ function drawOverlay(ctx, data, w, h){
   const mapId = state.currentMapId;
   const off = (mapId!=null ? state.calibrationByMap[mapId] : null) || {dx:0,dy:0};
 
+  // ✅ lấy filter state (mặc định bật monster + battle)
+  const f = state.filters || {
+    npc:false, decoration:false, monster:true, invasion:false, battle:true
+  };
+
   // points
   for(const p of data.points){
+    if ((p.type==='npc'        && !f.npc) ||
+        (p.type==='decoration' && !f.decoration) ||
+        (p.type==='battle'     && !f.battle)) continue;
+
     const {px,py}=logicalToPixel(p.x + off.dx, p.y + off.dy, w, h);
     ctx.beginPath();
     if (p.type === 'npc') {
@@ -87,17 +96,20 @@ function drawOverlay(ctx, data, w, h){
     ctx.arc(px,py,3,0,Math.PI*2);
     ctx.fill();
   }
+
   // spots
   ctx.lineWidth=1;
   for (const s of data.spots) {
+    if ((s.type==='spot'     && !f.monster) ||
+        (s.type==='invasion' && !f.invasion)) continue;
+
     if (s.lockResize) {
-      // 🔒 Single từ block 1/3 → vẽ chấm đỏ tại x1,y1
       const p = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
       ctx.beginPath();
       ctx.fillStyle = getCSS('--danger');
       ctx.arc(p.px, p.py, 3, 0, Math.PI * 2);
       ctx.fill();
-      continue; // bỏ qua xử lý spot thường
+      continue;
     }
 
     const a = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
@@ -106,7 +118,6 @@ function drawOverlay(ctx, data, w, h){
     const ww = Math.abs(a.px - b.px), hh = Math.abs(a.py - b.py);
 
     if (ww === 0 && hh === 0) {
-      // fallback: single cũ
       ctx.beginPath();
       ctx.fillStyle = getCSS('--danger');
       ctx.arc(x, y, 3, 0, Math.PI * 2);

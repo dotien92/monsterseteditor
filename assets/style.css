@@ -542,3 +542,22 @@ canvas {
   z-index: 4;
   box-shadow: 0 2px 4px rgba(0,0,0,0.35); /* 👈 thêm bóng mờ */
 }
+
+#mobFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid #1d1d2b;
+  border-radius: 6px;
+  background: #0f0f19;
+  margin-bottom: 8px;
+}
+#mobFilters label {
+  cursor: pointer;
+  user-select: none;
+}
+#mobFilters input {
+  margin-right: 4px;
+}

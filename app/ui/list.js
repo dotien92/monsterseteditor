@@ -9,6 +9,41 @@ function nameOf(cid){
   return state.classes[cid]?.name || ('Class ' + cid);
 }
 
+/* ========== FILTER UI ========== */
+export function renderMonsterFilters(container){
+  // Nếu state.filters chưa có thì khởi tạo mặc định
+  if(!state.filters){
+    state.filters = {
+      npc: false,
+      decoration: false,
+      monster: true,
+      invasion: false,
+      battle: true
+    };
+  }
+
+  container.innerHTML = `
+    <label><input type="checkbox" data-ft="npc" ${state.filters.npc?'checked':''}/> NPC</label>
+    <label><input type="checkbox" data-ft="decoration" ${state.filters.decoration?'checked':''}/> Decoration</label>
+    <label><input type="checkbox" data-ft="monster" ${state.filters.monster?'checked':''}/> Monster</label>
+    <label><input type="checkbox" data-ft="invasion" ${state.filters.invasion?'checked':''}/> Invasion</label>
+    <label><input type="checkbox" data-ft="battle" ${state.filters.battle?'checked':''}/> Battle</label>
+  `;
+
+  container.querySelectorAll('input[type=checkbox]').forEach(chk=>{
+    chk.addEventListener('change', ()=>{
+      const key = chk.dataset.ft;
+      state.filters[key] = chk.checked;
+
+      // refresh list + canvas
+      const mobList = document.getElementById('mobList');
+      if(mobList) renderMonsterList(mobList);
+      draw(document.getElementById('view'));
+    });
+  });
+}
+
+/* ========== HOVER & SELECTION ========== */
 export function updateListHover(container){
   if(!container) return;
   container.querySelectorAll('.list-row.hovered').forEach(el=>el.classList.remove('hovered'));
@@ -30,10 +65,10 @@ export function updateListSelection(container){
   }
 }
 
+/* ========== RENDER GROUP ========== */
 function renderGroup(title, singles, spots, kind){
   let html = `<div class="group"><div class="group-title">${title}</div>`;
 
-  // Single
   if (singles && singles.length){
     html += `<div class="subgroup"><div class="sub-title">Single (${singles.length})</div>`;
     html += '<ul style="list-style:none; margin:0; padding:0 8px 6px 8px">';
@@ -47,7 +82,6 @@ function renderGroup(title, singles, spots, kind){
     html += '</ul></div>';
   }
 
-  // Spot
   if (spots && spots.length){
     html += `<div class="subgroup"><div class="sub-title">Spot (${spots.length})</div>`;
     html += '<ul style="list-style:none; margin:0; padding:0 8px 6px 8px">';
@@ -65,6 +99,7 @@ function renderGroup(title, singles, spots, kind){
   return html;
 }
 
+/* ========== RENDER MONSTER LIST ========== */
 export function renderMonsterList(container){
   const mapId = state.currentMapId;
   if(mapId == null){
@@ -77,23 +112,25 @@ export function renderMonsterList(container){
     return;
   }
 
-  // Phân loại
-  const npcSingles  = data.points.filter((p)=>p.type==='npc').map((p,i)=>({...p, idx:i}));
-  const decoSingles = data.points.filter((p)=>p.type==='decoration').map((p,i)=>({...p, idx:i}));
-  const battleSingles = data.points.filter((p)=>p.type==='battle').map((p,i)=>({...p, idx:i}));
+  const f = state.filters || { npc:true, decoration:true, monster:true, invasion:true, battle:true };
 
-  const monsterSingles = data.spots.filter((s)=>(s.type==='spot' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
-  const monsterSpots   = data.spots.filter((s)=>(s.type==='spot' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
+  // lọc theo filter
+  const npcSingles  = f.npc        ? data.points.filter(p=>p.type==='npc').map((p,i)=>({...p, idx:i})) : [];
+  const decoSingles = f.decoration ? data.points.filter(p=>p.type==='decoration').map((p,i)=>({...p, idx:i})) : [];
+  const battleSingles = f.battle   ? data.points.filter(p=>p.type==='battle').map((p,i)=>({...p, idx:i})) : [];
 
-  const invasionSingles = data.spots.filter((s)=>(s.type==='invasion' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
-  const invasionSpots   = data.spots.filter((s)=>(s.type==='invasion' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
+  const monsterSingles = f.monster ? data.spots.filter(s=>(s.type==='spot' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i})) : [];
+  const monsterSpots   = f.monster ? data.spots.filter(s=>(s.type==='spot' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i})) : [];
+
+  const invasionSingles = f.invasion ? data.spots.filter(s=>(s.type==='invasion' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i})) : [];
+  const invasionSpots   = f.invasion ? data.spots.filter(s=>(s.type==='invasion' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i})) : [];
 
   let html = '';
-  html += renderGroup('NPC (0)', npcSingles, [], 'point');
+  html += renderGroup('NPC', npcSingles, [], 'point');
   html += renderGroup('Decoration', decoSingles, [], 'point');
-  html += renderGroup('Monster (1)', monsterSingles, monsterSpots, 'spot');
-  html += renderGroup('Invasion (3)', invasionSingles, invasionSpots, 'spot');
-  html += renderGroup('Battle (4)', battleSingles, [], 'point');
+  html += renderGroup('Monster', monsterSingles, monsterSpots, 'spot');
+  html += renderGroup('Invasion', invasionSingles, invasionSpots, 'spot');
+  html += renderGroup('Battle', battleSingles, [], 'point');
 
   container.innerHTML = html || '<div class="muted" style="padding:8px">Không có dữ liệu.</div>';
 
@@ -101,6 +138,7 @@ export function renderMonsterList(container){
   updateListSelection(container);
 }
 
+/* ========== BIND INTERACTIONS ========== */
 const _bound = Symbol('bound');
 export function bindListInteractions(container){
   if(container[_bound]) return;

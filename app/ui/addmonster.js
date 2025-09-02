@@ -18,7 +18,7 @@ export function initAddMonsterUI() {
     <h3>Thêm Quái</h3>
     <label>Loại block:
       <select class="blockType">
-        <option value="0">NPC (0)</option>
+        <option value="0">NPC & Decoration (0)</option>
         <option value="1">Monster (1)</option>
         <option value="3">Invasion (3)</option>
         <option value="4">Battle (4)</option>

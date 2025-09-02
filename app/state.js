@@ -25,4 +25,11 @@ export const state = {
 
   // mouse position tracking for paste
   lastMouse: null,
+  filters: {
+    npc: false,
+    decoration: false,
+    monster: true,
+    invasion: false,
+    battle: true
+  },
 };
