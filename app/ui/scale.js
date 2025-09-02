@@ -15,7 +15,7 @@ export function attachScaleUI({ input, minus, plus, label, onChange }){
   };
 
   // init
-  state.viewScale = clamp(state.viewScale ?? 1.0);
+  state.viewScale = clamp(state.viewScale ?? 0.8);
   updateScaleUI();
 
   input.addEventListener('input', ()=>{

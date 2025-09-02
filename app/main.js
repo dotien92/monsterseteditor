@@ -9,18 +9,28 @@ import {
 } from './ui.js';
 import { draw } from './render.js';
 import { state } from './state.js';
-
+import { renderMonsterFilters } from './ui/list.js';
+import { initAddMonsterUI, bindCanvasForAddMonster } from "./ui/addmonster.js";
+import { exportMonsterSetBase, downloadFile } from "./save.js";
 
 window.addEventListener('DOMContentLoaded', async ()=>{
+  bindCanvasForAddMonster(document.getElementById("view"));
+  document.getElementById("saveMonsterBtn").addEventListener("click", () => {
+    const txt = exportMonsterSetBase();
+    downloadFile("MonsterSetBase.txt", txt);
+  });
   const { mapSelect, canvas, mobList } = bindUI();
   bindListInteractions(mobList);
-
+  const filterBox = document.getElementById("mobFilters");
+  if (filterBox) renderMonsterFilters(filterBox);
   try{
     await loadAll();
+    initAddMonsterUI();
     refreshMapSelect(mapSelect);
     renderMonsterList(mobList);
     renderInfoPanel(document.getElementById('infoPanel'));
     renderMapStats(document.getElementById('mapStats'));
+    state.history.push(JSON.stringify(state.monstersByMap));
 
     if(state.currentMapId==null){
       const first = state.images.find(i=>i.mapId!=null)?.mapId;
@@ -35,6 +45,7 @@ window.addEventListener('DOMContentLoaded', async ()=>{
       renderInfoPanel(document.getElementById('infoPanel'));
       renderMapStats(document.getElementById('mapStats'));
       bindListInteractions(mobList);
+      if (filterBox) renderMonsterFilters(filterBox);
       draw(canvas);
     };
   }catch(e){

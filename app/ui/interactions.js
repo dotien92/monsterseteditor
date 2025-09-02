@@ -14,6 +14,34 @@ import { renderMapStats } from './stats.js';   // ✅ thêm
 
 const gclamp = (v)=> Math.max(0, Math.min(CONFIG.GRID_SIZE - 1, Math.round(v)));
 
+function isVisibleByFilter(hit) {
+  if (!hit) return false;
+  const f = state.filters || {
+    npc:false, decoration:false, monster:true, invasion:false, battle:true
+  };
+  const mapId = state.currentMapId;
+  const data = state.monstersByMap[mapId];
+  if (!data) return false;
+
+  if (hit.kind === 'point') {
+    const p = data.points[hit.idx];
+    if (!p) return false;
+    if (p.type === 'npc'        && !f.npc) return false;
+    if (p.type === 'decoration' && !f.decoration) return false;
+    if (p.type === 'battle'     && !f.battle) return false;
+  } else if (hit.kind === 'spot') {
+    const s = data.spots[hit.idx];
+    if (!s) return false;
+    if (s.type === 'spot'     && !f.monster) return false;
+    if (s.type === 'invasion' && !f.invasion) return false;
+  }
+  return true;
+}
+
+function refreshMobList(mobList) {
+  if (mobList) renderMonsterList(mobList);
+}
+
 export default function bindUI(){
   const mapSelect    = document.querySelector('#mapSelect');
   const canvas       = byId('view');
@@ -85,7 +113,9 @@ export default function bindUI(){
   // hover/drag/resize & sync list
   canvas.addEventListener('mousedown', (ev)=>{
     if(state.currentMapId==null || state.calibrating) return;
-    const hit = hitTest(ev, canvas);
+    if(state.addingMonster) return;
+    let hit = hitTest(ev, canvas);
+    if (!isVisibleByFilter(hit)) hit = null;
     state.selection = hit ? { kind: hit.kind, idx: hit.idx } : null;
     updateListSelection(mobList);
     renderInfoPanel(infoPanel);
@@ -94,37 +124,46 @@ export default function bindUI(){
       if(hit.kind==='spot' && hit.resize){
         const mapId = state.currentMapId;
         const s = state.monstersByMap[mapId]?.spots[hit.idx];
-        if(s){
-          const minX = Math.min(s.x1, s.x2), maxX = Math.max(s.x1, s.x2);
-          const minY = Math.min(s.y1, s.y2), maxY = Math.max(s.y1, s.y2);
-          let ax, ay;
-          if(hit.resize==='tl'){ ax = maxX; ay = maxY; }
-          if(hit.resize==='tr'){ ax = maxX; ay = minY; }
-          if(hit.resize==='bl'){ ax = minX; ay = maxY; }
-          if(hit.resize==='br'){ ax = minX; ay = minY; }
-          state.dragging = { mode:'resize', corner: hit.resize, anchor:{ ax, ay } };
-        }else{
-          state.dragging = { mode:'resize', corner: hit.resize };
+        if(s?.lockResize){
+          console.log("🔒 Spot này bị khoá resize, chỉ cho phép move");
+          // bỏ qua resize, xử lý move ở nhánh else
+        } else {
+          // xử lý resize bình thường
+          if(s){
+            const minX = Math.min(s.x1, s.x2), maxX = Math.max(s.x1, s.x2);
+            const minY = Math.min(s.y1, s.y2), maxY = Math.max(s.y1, s.y2);
+            let ax, ay;
+            if(hit.resize==='tl'){ ax = maxX; ay = maxY; }
+            if(hit.resize==='tr'){ ax = maxX; ay = minY; }
+            if(hit.resize==='bl'){ ax = minX; ay = maxY; }
+            if(hit.resize==='br'){ ax = minX; ay = minY; }
+            state.dragging = { mode:'resize', corner: hit.resize, anchor:{ ax, ay } };
+          }else{
+            state.dragging = { mode:'resize', corner: hit.resize };
+          }
+          state.hover = null;
+          setCursor(canvas, resizeCursorFor(hit.resize));
+          redraw();
+          return;
         }
-        state.hover = null;
-        setCursor(canvas, resizeCursorFor(hit.resize));
-      }else{
-        const mapId = state.currentMapId;
-        const data = state.monstersByMap[mapId];
-        const s = hit.kind==='spot' ? data?.spots?.[hit.idx] : null;
-        if(s){
-          const { Xc, Yc } = gridFromMouse(ev, canvas);
-          const { xr, yr } = rawFromCalibrated(Xc, Yc);
-          const minX = Math.min(s.x1, s.x2), minY = Math.min(s.y1, s.y2);
-          const w = Math.abs(s.x2 - s.x1), h = Math.abs(s.y2 - s.y1);
-          const ox = xr - minX, oy = yr - minY;
-          state.dragging = { mode:'move', grab:{ ox, oy, w, h } };
-        }else{
-          state.dragging = { mode:'move' };
-        }
-        state.hover = null;
-        setCursor(canvas, 'grabbing');
       }
+
+      // 🟢 Move (spot/point hoặc spot có lockResize)
+      const mapId = state.currentMapId;
+      const data = state.monstersByMap[mapId];
+      const s = hit.kind==='spot' ? data?.spots?.[hit.idx] : null;
+      if(s){
+        const { Xc, Yc } = gridFromMouse(ev, canvas);
+        const { xr, yr } = rawFromCalibrated(Xc, Yc);
+        const minX = Math.min(s.x1, s.x2), minY = Math.min(s.y1, s.y2);
+        const w = Math.abs(s.x2 - s.x1), h = Math.abs(s.y2 - s.y1);
+        const ox = xr - minX, oy = yr - minY;
+        state.dragging = { mode:'move', grab:{ ox, oy, w, h } };
+      }else{
+        state.dragging = { mode:'move' };
+      }
+      state.hover = null;
+      setCursor(canvas, 'grabbing');
     }else{
       state.dragging = null;
       setCursor(canvas, 'crosshair');
@@ -134,12 +173,19 @@ export default function bindUI(){
 
   canvas.addEventListener('mousemove', (ev)=>{
     if(state.currentMapId==null) return;
-
+    if(state.addingMonster) return;
     // không kéo: xử lý hover/cursor
     if(!state.dragging || !state.selection){
-      const h = hitTest(ev, canvas);
+      let h = hitTest(ev, canvas);
+      if (!isVisibleByFilter(h)) h = null;
       if(h && h.kind==='spot' && h.resize){
-        setCursor(canvas, resizeCursorFor(h.resize));
+        const mapId = state.currentMapId;
+        const s = state.monstersByMap[mapId]?.spots[h.idx];
+        if(s?.lockResize){
+          setCursor(canvas, 'crosshair'); // ❌ không cho resize
+        } else {
+          setCursor(canvas, resizeCursorFor(h.resize));
+        }
       } else {
         setCursor(canvas, 'crosshair');
       }
@@ -191,6 +237,10 @@ export default function bindUI(){
           s.y1 = gclamp(minY); s.y2 = gclamp(maxY);
         }
       }else if(state.dragging.mode==='resize'){
+        if(s.lockResize){
+          console.log("🔒 Không thể resize spot này");
+          return;
+        }
         const { ax, ay } = (state.dragging.anchor || {});
         if(ax==null || ay==null){
           const corner = state.dragging.corner;
@@ -213,11 +263,14 @@ export default function bindUI(){
       }
     }
 
+    // 🟢 refresh UI ngay khi kéo
+    refreshMobList(mobList);
     renderInfoPanel(infoPanel);
     redraw();
   });
 
   window.addEventListener('mouseup', ()=>{
+    if(state.addingMonster) return;
     state.dragging = null;
     setCursor(canvas, 'crosshair');
   });

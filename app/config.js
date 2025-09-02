@@ -4,6 +4,7 @@ export const CONFIG = {
   PATHS: {
     MAPS_JSON: 'map/maps.json',
     MONSTER: 'monster/Monster.txt',
-    MSB: 'monster/MonsterSetBase.txt'
+    MSB: 'monster/MonsterSetBase.txt',
+    DECORATION: 'monster/decoration_ID.json'
   }
 };

@@ -22,10 +22,12 @@ export function renderInfoPanel(infoEl){
   if(sel.kind === 'point'){
     const p = data.points[sel.idx];
     if(!p){ infoEl.innerHTML = '<div class="muted">Không tìm thấy item.</div>'; return; }
-    const tag = p.isNPC ? 'npc' : 'monster';
-    const tagText = p.isNPC ? 'NPC' : 'Monster';
+    let tag = 'monster', tagText = 'Monster';
+    if(p.type==='npc'){ tag='npc'; tagText='NPC'; }
+    else if(p.type==='decoration'){ tag='decoration'; tagText='Decoration'; }
     rows.push(['Tên quái', nameOf(p.classId)]);
     rows.push(['Loại', `<span class="tag ${tag}">${tagText}</span>`]);
+    rows.push(['Kiểu', 'Single']); // point luôn là single
     rows.push(['Vị trí', `(x:${p.x}, y:${p.y})`]);
     rows.push(['Số lượng', '1']);
     rows.push(['Nguồn', `L${p.sourceLine ?? '?'}`]);
@@ -35,9 +37,16 @@ export function renderInfoPanel(infoEl){
     const tagMap = { spot:'monster', invasion:'invasion', event:'battle' };
     const tagKey = tagMap[s.type] || 'monster';
     const tagText = s.type==='invasion' ? 'Invasion' : (s.type==='event' ? 'Battle' : 'Monster');
+    const isSingle = !!s.lockResize;
+
     rows.push(['Tên quái', nameOf(s.classId)]);
     rows.push(['Loại', `<span class="tag ${tagKey}">${tagText}</span>`]);
-    rows.push(['Vị trí', `(x1:${s.x1}, y1:${s.y1}) → (x2:${s.x2}, y2:${s.y2})`]);
+    rows.push(['Kiểu', isSingle ? 'Single' : 'Spot']);
+    if(isSingle){
+      rows.push(['Vị trí', `(x:${s.x1}, y:${s.y1})`]);
+    } else {
+      rows.push(['Vị trí', `(x1:${s.x1}, y1:${s.y1}) → (x2:${s.x2}, y2:${s.y2})`]);
+    }
     rows.push(['Số lượng', Number.isFinite(s.count) ? String(s.count) : '—']);
     if(Number.isFinite(s.value)) rows.push(['Giá trị', String(s.value)]);
     rows.push(['Nguồn', `L${s.sourceLine ?? '?'}`]);

@@ -17,12 +17,14 @@
     <section class="card card-left">
       <h2>Cấu hình &amp; Ghi chú</h2>
       <div class="content content-left">
-        <div class="legend" style="margin-bottom:10px">
-          <span class="chip"><span class="dot danger"></span> Monster (single)</span>
-          <span class="chip"><span class="dot npc"></span> NPC (single)</span>
-          <span class="chip"><span class="box spot"></span> Spot / Vùng</span>
-        </div>
-
+      <div class="legend" style="margin-bottom:10px">
+        <span class="chip"><span class="dot npc"></span> NPC (Single)</span>
+        <span class="chip"><span class="dot deco"></span> Decoration</span>
+        <span class="chip"><span class="dot danger"></span> Monster / Battle (Single)</span>
+        <span class="chip"><span class="box spot"></span> Monster Spot</span>
+        <span class="chip"><span class="dot invasion"></span> Invasion (Single Point)</span>
+        <span class="chip"><span class="box invasion"></span> Invasion (Spot)</span>
+      </div>
         <!-- Chọn map -->
         <div class="stack gap-8">
           <div class="row gap-8">
@@ -36,7 +38,16 @@
           </div>
         </div>
       </div>
+      <!-- ✅ Panel thêm quái (dưới stats, trên scale) -->
+      <div id="monsterAddPanel" class="panel" style="margin-top:12px">
+        <!-- Form thêm quái sẽ được inject ở đây -->
+      </div>
 
+      <!-- ✅ Lưu file -->
+      <div class="stack gap-8" style="margin-top:12px">
+        <button id="saveMonsterBtn">💾 Lưu MonsterSetBase.txt</button>
+      </div>
+      
       <!-- ✅ Điều khiển cố định ở đáy thẻ (không còn nổi bên phải) -->
       <div class="left-controls">
         <div class="fc-row">
@@ -59,7 +70,8 @@
       <div class="content content-grid">
         <div>
           <h3 class="muted" style="margin-top:0">Danh sách quái (map đang chọn)</h3>
-          <div id="mobList" class="scroll">
+          <div id="mobFilters"></div>
+          <div id="mobList">
             <div class="muted" style="padding:8px">Chưa có dữ liệu.</div>
           </div>
 

@@ -1,260 +1,671 @@
-:root{
-     --bg:#0b0b11;
-     --panel:#141420;
-     --text:#e7e7ef;
-     --muted:#9aa0ac;
-     --danger:#ff6b6b;
-     --npc:#b97aff;
-     --spot:#ffb454;
+:root {
+  --bg: #0b0b11;
+  --panel: #141420;
+  --text: #e7e7ef;
+  --muted: #9aa0ac;
+
+  /* màu theo nhóm */
+  --npc: #4a90e2;        /* NPC xanh dương */
+  --deco: #b97aff;       /* Decoration tím */
+  --danger: #ff6b6b;     /* Monster + Battle */
+  --spot: #ff6b6b;       /* Spot cùng màu Monster */
+  --invasion: #3cb371;   /* Invasion xanh lá */
 }
- html,body{
-    height:100%
+html,
+body {
+  height: 100%;
 }
- body{
-    margin:0;
-     font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-     background:var(--bg);
-     color:var(--text)
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica, Arial;
+  background: var(--bg);
+  color: var(--text);
 }
- header{
-    padding:12px 16px;
-     background:linear-gradient(180deg,#17172a,#121222);
-     position:sticky;
-     top:0;
-     z-index:10
+header {
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #17172a, #121222);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
- h1{
-    margin:0;
-     font-size:18px;
-     font-weight:700
+h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
 }
- main{
-    display:grid;
-     grid-template-columns:320px 1fr;
-     gap:12px;
-     padding:12px
+main {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 12px;
+  padding: 12px;
 }
- .card{
-    background:var(--panel);
-     border:1px solid #1d1d2b;
-     border-radius:12px;
-     overflow:hidden;
+.card {
+  background: var(--panel);
+  border: 1px solid #1d1d2b;
+  border-radius: 12px;
+  overflow: hidden;
 }
- .card h2{
-    margin:0;
-     font-size:14px;
-     font-weight:700;
-     padding:10px 12px;
-     border-bottom:1px solid #1d1d2b;
-     color:#cbd5e1
+.card h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-bottom: 1px solid #1d1d2b;
+  color: #cbd5e1;
 }
- .card .content{
-    padding:10px 12px
+.card .content {
+  padding: 10px 12px;
 }
- .muted{
-    color:var(--muted);
-     font-size:12px
+.muted {
+  color: var(--muted);
+  font-size: 12px;
 }
- .legend{
-    display:flex;
-     gap:10px;
-     flex-wrap:wrap;
-     font-size:12px;
-     align-items:center
+.legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  align-items: center;
 }
- .dot{
-    width:10px;
-     height:10px;
-     border-radius:50%
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
 }
- .dot.danger{
-    background:var(--danger)
+.box {
+  width: 12px;
+  height: 12px;
+  border: 1px solid;
+  border-radius: 2px;
 }
- .dot.npc{
-    background:var(--npc)
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid #23233a;
 }
- .box.spot{
-    width:12px;
-     height:12px;
-     background: color-mix(in srgb, var(--spot) 30%, transparent);
-     border:1px solid var(--spot);
-     border-radius:2px
+
+/* === Legend Colors === */
+.dot.npc { background: var(--npc); }
+.dot.deco { background: var(--deco); }
+.dot.danger { background: var(--danger); } /* Monster + Battle */
+.box.spot {
+  border-color: var(--spot);
+  background: color-mix(in srgb, var(--spot) 30%, transparent);
 }
- .chip{
-    display:inline-flex;
-     align-items:center;
-     gap:6px;
-     padding:5px 8px;
-     border-radius:999px;
-     border:1px solid #23233a
+.dot.invasion { background: var(--invasion); }
+.box.invasion {
+  border-color: var(--invasion);
+  background: color-mix(in srgb, var(--invasion) 30%, transparent);
 }
- button{
-    padding:8px 12px;
-     border-radius:8px;
-     border:1px solid #2a2a43;
-     background:#15152a;
-     color:var(--text);
-     cursor:pointer
+
+button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #2a2a43;
+  background: #15152a;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
 }
- button.primary{
-    border-color:#2b4170;
-     background:#182544
+
+/* Hover */
+button:hover:not(:disabled) {
+  background: #1d1d36;
+  border-color: #3a3a55;
 }
- table{
-    width:100%;
-     border-collapse:collapse;
-     font-size:12px
+
+/* Pressed */
+button:active:not(:disabled) {
+  background: #101022;
+  border-color: #505072;
 }
- th,td{
-    border-bottom:1px solid #222238;
-     padding:6px 8px;
-     text-align:left
+
+/* Disabled */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
- th{
-    color:#aab2c5;
-     font-weight:600
+
+/* Primary button */
+button.primary {
+  border-color: #2b4170;
+  background: #182544;
 }
- .scroll{
-    max-height:220px;
-     overflow:auto;
-     border:1px solid #1d1d2b;
-     border-radius:8px
+button.primary:hover:not(:disabled) {
+  background: #203060;
 }
- canvas{
-     background:#090912;
-     border:1px solid #1d1d2b;
-     border-radius:12px;
-     display:block;
-     max-width:none;
-     image-rendering: pixelated;
-     cursor: crosshair;
+button.primary:active:not(:disabled) {
+  background: #142040;
 }
- .coords{
-    font-variant-numeric:tabular-nums;
-     font-size:12px;
-     color:#b9c1d6
+
+/* Toggled button (ví dụ filter) */
+button.toggled {
+  background: #2b4170;
+  border-color: #3d5c99;
+  color: #cfe4ff;
 }
- .content-grid{
-    display:grid;
-     grid-template-columns: 300px 1fr;
-     gap:12px
+
+/* Hiệu ứng nhấp nháy chữ */
+@keyframes pulseText {
+  0%, 100% { opacity: 1}
+  50% { opacity: 0.7 }
 }
- #scale{
-     width: 180px;
+
+button.adding {
+  background: #4d2020 !important; /* nền xanh */
+  border-color: #cc2e2e !important;
+  color: #ffaaaa;
+  animation: pulseText 1.2s infinite;
 }
- .w48{
-     width:48px;
-     display:inline-block;
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
 }
- .right{
-     text-align:right;
+th,
+td {
+  border-bottom: 1px solid #222238;
+  padding: 6px 8px;
+  text-align: left;
 }
+th {
+  color: #aab2c5;
+  font-weight: 600;
+}
+.scroll {
+  max-height: 220px;
+  overflow: auto;
+  border: 1px solid #1d1d2b;
+  border-radius: 8px;
+}
+canvas {
+  background: #090912;
+  border: 1px solid #1d1d2b;
+  border-radius: 12px;
+  display: block;
+  max-width: none;
+  image-rendering: pixelated;
+  cursor: crosshair;
+}
+.coords {
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: #b9c1d6;
+}
+.content-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 12px;
+}
+
+#scale {
+  width: 180px;
+}
+.w48 {
+  width: 48px;
+  display: inline-block;
+}
+.right {
+  text-align: right;
+}
+
 /* List highlight */
- .list-row{
-     border-radius:6px;
-     padding:4px 6px;
-     transition:background-color .12s ease 
+.list-row {
+  border-radius: 6px;
+  padding: 4px 6px;
+  transition: background-color 0.12s ease;
 }
- .list-row.hovered{
-     background: rgba(136,224,255,.12);
+.list-row.hovered {
+  background: rgba(136, 224, 255, 0.12);
 }
- .list-row.selected{
-     background: rgba(102,217,255,.18);
-     outline:1px solid rgba(102,217,255,.35);
+.list-row.selected {
+  background: rgba(102, 217, 255, 0.18);
+  outline: 1px solid rgba(102, 217, 255, 0.35);
 }
+
 /* Info panel */
- .info-panel{
-     border:1px solid #1d1d2b;
-     border-radius:8px;
-     padding:8px;
-     background:#10101a;
-     font-size:12px;
+.info-panel {
+  border: 1px solid #1d1d2b;
+  border-radius: 8px;
+  padding: 8px;
+  background: #10101a;
+  font-size: 12px;
 }
- .info-row{
-     display:flex;
-     gap:8px;
-     line-height:1.8;
+.info-row {
+  display: flex;
+  gap: 8px;
+  line-height: 1.8;
 }
- .info-label{
-     color:var(--muted);
-     width:90px;
-     flex:0 0 90px;
+.info-label {
+  color: var(--muted);
+  width: 90px;
+  flex: 0 0 90px;
 }
- .info-value{
-     color:var(--text);
-     flex:1 1 auto;
-     word-break:break-word;
+.info-value {
+  color: var(--text);
+  flex: 1 1 auto;
+  word-break: break-word;
 }
+
 /* Tag màu */
- .tag{
-     display:inline-block;
-     padding:2px 6px;
-     border:1px solid #2a2a43;
-     border-radius:999px;
-     font-size:11px;
-     margin-right:6px 
+.tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border: 1px solid #2a2a43;
+  border-radius: 999px;
+  font-size: 11px;
+  margin-right: 6px;
 }
- .tag.npc{
-     border-color:#7f62b8;
-     background:rgba(185,122,255,.12);
-     color:#d7b8ff;
+.tag.npc {
+  border-color: var(--npc);
+  background: color-mix(in srgb, var(--npc) 15%, transparent);
+  color: var(--npc);
 }
- .tag.monster{
-     border-color:#764646;
-     background:rgba(255,107,107,.10);
-     color:#ffb1b1;
+.tag.monster {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+  color: var(--danger);
 }
- .tag.invasion{
-     border-color:#9a6a2b;
-     background:rgba(255,180,84,.12);
-     color:#ffd7a4;
+.tag.invasion {
+  border-color: var(--invasion);
+  background: color-mix(in srgb, var(--invasion) 15%, transparent);
+  color: var(--invasion);
 }
- .tag.battle{
-     border-color:#3d6c7a;
-     background:rgba(136,224,255,.12);
-     color:#c7f0ff;
+.tag.battle {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+  color: var(--danger);
 }
+.tag.deco {
+  border-color: var(--deco);
+  background: color-mix(in srgb, var(--deco) 15%, transparent);
+  color: var(--deco);
+}
+
 /* Stats panel */
- .stats-panel{
-     border:1px solid #1d1d2b;
-     border-radius:8px;
-     background:#0f0f19;
-     padding:8px;
-     font-size:12px;
+.stats-panel {
+  border: 1px solid #1d1d2b;
+  border-radius: 8px;
+  background: #0f0f19;
+  padding: 8px;
+  font-size: 12px;
 }
- .stats-list{
-     display:flex;
-     flex-direction:column;
-     gap:4px;
-     font-size:12px;
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
 }
- .stats-list .stats-item{
-     display:flex;
-     justify-content:space-between;
+.stats-list .stats-item {
+  display: flex;
+  justify-content: space-between;
 }
- .stats-list .label{
-     color:var(--muted);
+.stats-list .label {
+  color: var(--muted);
 }
- .stats-list .value{
-     color:var(--text);
-     font-variant-numeric:tabular-nums;
+.stats-list .value {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
+
 /* Left column controls */
- .card-left{
-     display:flex;
-     flex-direction:column;
+.card-left {
+  display: flex;
+  flex-direction: column;
 }
- .content-left{
-     padding-bottom:12px;
+.content-left {
+  padding-bottom: 12px;
 }
- .left-controls{
-     margin-top:auto;
-     border-top:1px solid #1d1d2b;
-     padding:10px 12px;
-     background:#0f0f19;
+.left-controls {
+  margin-top: auto;
+  border-top: 1px solid #1d1d2b;
+  padding: 10px 12px;
+  background: #0f0f19;
 }
- .left-controls .fc-row{
-     display:flex;
-     align-items:center;
-     gap:8px;
+.left-controls .fc-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monster-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.dialog-content {
+  background: #141420;
+  border: 1px solid #2a2a43;
+  border-radius: 8px;
+  padding: 16px;
+  width: 400px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dialog-content input {
+  padding: 6px;
+  border: 1px solid #2a2a43;
+  border-radius: 4px;
+  background: #1a1a2d;
+  color: #fff;
+}
+.dialog-content .list-row {
+  padding: 4px 6px;
+  cursor: pointer;
+}
+.dialog-content .list-row:hover {
+  background: #2a2a43;
+}
+/* ===== Modal background ===== */
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* ===== Popup content ===== */
+.modal-content {
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  width: 360px;
+  max-width: 95%;
+  font-family: sans-serif;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Tiêu đề */
+.modal-content h3 {
+  margin-top: 0;
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Label + input nằm theo cột */
+.modal-content label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Select và Input */
+.modal-content select,
+.modal-content input {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  margin-top: 4px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 3px rgba(74,144,226,0.6);
+}
+
+/* Buttons */
+.modal-content button {
+  padding: 8px 14px;
+  margin: 10px 5px 0 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.modal-content .okBtn {
+  background: #4caf50;
+  color: #fff;
+}
+.modal-content .okBtn:hover {
+  background: #45a049;
+}
+
+.modal-content .cancelBtn {
+  background: #f44336;
+  color: #fff;
+}
+.modal-content .cancelBtn:hover {
+  background: #d32f2f;
+}
+
+/* Animation nhỏ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Panel Thêm Quái ===== */
+#monsterAddPanel {
+  border: 1px solid #1d1d2b;
+  border-radius: 8px;
+  background: #0f0f19;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+
+#monsterAddPanel h3 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+/* ===== Monster list panel ===== */
+#mobList {
+  border: 1px solid #1d1d2b;
+  border-radius: 8px;
+  background: #0f0f19;
+  font-size: 12px;
+  max-height: 440px;   /* cao gấp đôi */
+  overflow-y: auto;    /* chính nó scroll luôn */
+  margin-top: 6px;
+  position: relative;  /* cho sticky hoạt động */
+}
+
+/* Item trong danh sách */
+#mobList .list-row {
+  padding: 6px 8px;
+  border-bottom: 1px solid #1d1d2b;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+#mobList .list-row:last-child {
+  border-bottom: none;
+}
+#mobList .list-row:hover {
+  background: rgba(136, 224, 255, 0.08);
+}
+#mobList .list-row.selected {
+  background: rgba(102, 217, 255, 0.18);
+  outline: 1px solid rgba(102, 217, 255, 0.35);
+}
+
+
+/* Label và tag trong list */
+#mobList .mob-name {
+  font-weight: 500;
+  color: var(--text);
+}
+
+#mobList .mob-meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Scrollbar tuỳ chỉnh */
+#mobList::-webkit-scrollbar {
+  width: 6px;
+}
+#mobList::-webkit-scrollbar-thumb {
+  background: #2a2a43;
+  border-radius: 3px;
+}
+#mobList::-webkit-scrollbar-thumb:hover {
+  background: #3d3d5c;
+}
+
+#monsterAddPanel label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--text);
+}
+
+#monsterAddPanel select,
+#monsterAddPanel input {
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #2a2a43;
+  background: #1a1a2d;
+  color: var(--text);
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+#monsterAddPanel small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+#monsterAddPanel .addBtn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.tag.new {
+  border-color: #2d7a46;
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+}
+
+/* ===== Monster List Grouping ===== */
+#mobList .group {
+  border: 1px solid #2a2a43;
+  border-radius: 6px;
+  margin: 8px;
+  background: #141420;
+}
+#mobList .group-title {
+  font-weight: bold;
+  padding: 6px 10px;
+  background: #1d1d2b;
+  border-bottom: 1px solid #2a2a43;
+  color: #cbd5e1;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+#mobList .subgroup {
+  padding: 4px 0;
+}
+#mobList .sub-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9aa0ac;
+  padding: 4px 10px;
+  border-left: 3px solid #2a2a43;
+  margin: 2px 0;
+  position: sticky;
+  top: 27px;
+  background: #141420;
+  z-index: 4;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+}
+.sub-count {
+  font-size: 11px;
+  color: #888;
+  text-align: right;
+  padding: 2px 8px 6px 0;
+}
+
+#mobFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid #1d1d2b;
+  border-radius: 6px;
+  background: #0f0f19;
+  margin-bottom: 8px;
+}
+#mobFilters label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+#mobFilters input {
+  margin: 0;
+}
+/* Màu theo block */
+#mobFilters label.filter-npc {
+  color: var(--npc);
+  border: 1px solid var(--npc);
+  background: color-mix(in srgb, var(--npc) 15%, transparent);
+}
+#mobFilters label.filter-deco {
+  color: var(--deco);
+  border: 1px solid var(--deco);
+  background: color-mix(in srgb, var(--deco) 15%, transparent);
+}
+#mobFilters label.filter-monster {
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+}
+#mobFilters label.filter-battle {
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+}
+#mobFilters label.filter-invasion {
+  color: var(--invasion);
+  border: 1px solid var(--invasion);
+  background: color-mix(in srgb, var(--invasion) 15%, transparent);
+}
+#mobFilters .filter-note {
+  flex-basis: 100%;
+  margin-top: 6px;
+  font-size: 11px;
+  color: #ffb454; /* vàng cam cảnh báo */
+  opacity: 0.85;
 }
