@@ -109,11 +109,59 @@ button {
   background: #15152a;
   color: var(--text);
   cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
 }
+
+/* Hover */
+button:hover:not(:disabled) {
+  background: #1d1d36;
+  border-color: #3a3a55;
+}
+
+/* Pressed */
+button:active:not(:disabled) {
+  background: #101022;
+  border-color: #505072;
+}
+
+/* Disabled */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary button */
 button.primary {
   border-color: #2b4170;
   background: #182544;
 }
+button.primary:hover:not(:disabled) {
+  background: #203060;
+}
+button.primary:active:not(:disabled) {
+  background: #142040;
+}
+
+/* Toggled button (ví dụ filter) */
+button.toggled {
+  background: #2b4170;
+  border-color: #3d5c99;
+  color: #cfe4ff;
+}
+
+/* Hiệu ứng nhấp nháy chữ */
+@keyframes pulseText {
+  0%, 100% { opacity: 1}
+  50% { opacity: 0.7 }
+}
+
+button.adding {
+  background: #4d2020 !important; /* nền xanh */
+  border-color: #cc2e2e !important;
+  color: #ffaaaa;
+  animation: pulseText 1.2s infinite;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;

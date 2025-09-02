@@ -106,7 +106,20 @@ export function initAddMonsterUI() {
     }
   });
 
-  panel.querySelector(".addBtn").onclick = () => {
+  const addBtn = panel.querySelector(".addBtn");
+
+  addBtn.onclick = () => {
+    if (state.addingMonster) {
+      // Nếu đang ở chế độ thêm → hủy
+      state.addingMonster = null;
+      state.dragData = null;
+      hideTooltip();
+      addBtn.textContent = "➕ Thêm Quái";
+      addBtn.classList.remove("adding");
+      draw(document.getElementById("view"));
+      return;
+    }
+
     const blockType = parseInt(blockSelect.value, 10);
     const addMode = modeSelect.value; // 🟢 lấy kiểu thêm
     const monsterId = parseInt(panel.querySelector(".monsterId").value, 10);
@@ -117,6 +130,10 @@ export function initAddMonsterUI() {
 
     state.addingMonster = { blockType, addMode, id: monsterId, range, count, value, dir };
     console.log("👉 Ready to add monster:", state.addingMonster);
+
+    // đổi text + thêm hiệu ứng
+    addBtn.textContent = "🟢 Đang thêm... (ESC để hủy)";
+    addBtn.classList.add("adding");
 
     showTooltip();
   };
@@ -432,6 +449,11 @@ document.addEventListener("keydown", (e) => {
       state.addingMonster = null;
       state.dragData = null;
       hideTooltip();
+      const addBtn = document.querySelector("#monsterAddPanel .addBtn");
+      if (addBtn) {
+        addBtn.textContent = "➕ Thêm Quái";
+        addBtn.classList.remove("adding");
+      }
       draw(document.getElementById("view"));
       e.preventDefault();
       return;
