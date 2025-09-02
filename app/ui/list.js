@@ -43,29 +43,46 @@ export function renderMonsterList(container){
   }
 
   let html = '';
+
+  // Points
   html += '<div class="muted" style="padding:6px 8px">Điểm (single): ' + (data.points.length || 0) + '</div>';
   if(data.points.length){
     html += '<ul style="list-style:none; margin:0; padding:0 8px 6px 8px">';
     data.points.forEach((p,i)=>{
-      const ln  = p.sourceLine ?? '?';
-      const tag = p.type === 'npc' ? '<span style="margin-left:6px;font-size:11px;opacity:.85">[NPC]</span>' : '';
-      html += `<li class="list-row" data-kind="point" data-idx="${i}" style="padding:4px 0">[L${ln}] ${nameOf(p.classId)} ${tag} — (x:${p.x}, y:${p.y})</li>`;
+      const tag = p.type === 'npc'
+        ? '<span style="margin-left:6px;font-size:11px;opacity:.85">[NPC]</span>'
+        : '';
+
+      const lineLabel =
+        (p.sourceLine && p.sourceLine > 0)
+          ? `<span class="tag">L${p.sourceLine}</span>`
+          : `<span class="tag new">NEW</span>`;
+
+      html += `<li class="list-row" data-kind="point" data-idx="${i}" style="padding:4px 0">${lineLabel} ${nameOf(p.classId)} ${tag} — (x:${p.x}, y:${p.y})</li>`;
     });
     html += '</ul>';
   }
+
+  // Spots
   html += '<div class="muted" style="padding:6px 8px">Vùng (spot/invasion/event): ' + (data.spots.length || 0) + '</div>';
   if(data.spots.length){
     html += '<ul style="list-style:none; margin:0; padding:0 8px 8px 8px">';
     data.spots.forEach((s,i)=>{
-      const ln  = s.sourceLine ?? '?';
       let tag = '';
       if(s.type === 'invasion') tag = '[Invasion]';
       else if(s.type === 'event') tag = '[Event]';
       else if(s.type === 'spot') tag = '[Spot]';
-      html += `<li class="list-row" data-kind="spot" data-idx="${i}" style="padding:4px 0">[L${ln}] ${nameOf(s.classId)} ${tag} — (x1:${s.x1}, y1:${s.y1}) → (x2:${s.x2}, y2:${s.y2})</li>`;
+
+      const lineLabel =
+        (s.sourceLine && s.sourceLine > 0)
+          ? `<span class="tag">L${s.sourceLine}</span>`
+          : `<span class="tag new">NEW</span>`;
+
+      html += `<li class="list-row" data-kind="spot" data-idx="${i}" style="padding:4px 0">${lineLabel} ${nameOf(s.classId)} ${tag} — (x1:${s.x1}, y1:${s.y1}) → (x2:${s.x2}, y2:${s.y2})</li>`;
     });
     html += '</ul>';
   }
+
   container.innerHTML = html || '<div class="muted" style="padding:8px">Không có dữ liệu.</div>';
 
   updateListHover(container);

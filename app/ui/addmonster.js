@@ -1,7 +1,7 @@
 import { state } from "../state.js";
 import { draw } from "../render.js";
 import { CONFIG } from "../config.js";
-import { renderMonsterList } from "../ui.js";
+import { renderMonsterList as refreshMonsterListUI } from "../ui.js";
 
 let dragData = null;
 let isDrawing = false;
@@ -90,7 +90,6 @@ export function bindCanvasForAddMonster(canvas) {
   if (!canvas) return;
 
   canvas.addEventListener("mousedown", (e) => {
-
     // Huỷ paste bằng chuột phải
     if (state.pasting && e.button === 2) {
       console.log("❌ Huỷ paste mode (right click)");
@@ -155,13 +154,28 @@ function addPointMonster(blockType, id, x, y, range, count, value, dir) {
   const data = state.monstersByMap[mapId] ||= { points: [], spots: [] };
 
   if (blockType === 0) {
-    data.points.push({ classId: id, x, y, dir, range, isNPC: true, type: "npc", sourceLine: -1 });
+    data.points.push({
+      classId: id,
+      x, y, dir, range,
+      isNPC: true,
+      type: "npc",
+      sourceLine: "New"   // ✅ đánh dấu mới
+    });
   } else if (blockType === 4) {
-    data.points.push({ classId: id, x, y, dir, range, isNPC: false, type: "battle", sourceLine: -1 });
+    data.points.push({
+      classId: id,
+      x, y, dir, range,
+      isNPC: false,
+      type: "battle",
+      sourceLine: "New"   // ✅ đánh dấu mới
+    });
   }
 
   saveHistory();
-  renderMonsterList(document.getElementById("mobList"));
+  state.selection = null;
+  state.hover = null;
+  const mobList = document.getElementById("mobList");
+  if (mobList) refreshMonsterListUI(mobList);
   draw(document.getElementById("view"));
 }
 
@@ -170,13 +184,28 @@ function addSpotMonster(blockType, id, x1, y1, x2, y2, range, count, value, dir)
   const data = state.monstersByMap[mapId] ||= { points: [], spots: [] };
 
   if (blockType === 1) {
-    data.spots.push({ classId: id, x1, y1, x2, y2, dir, range, count, type: "spot", isNPC: false, sourceLine: -1 });
+    data.spots.push({
+      classId: id,
+      x1, y1, x2, y2, dir, range, count, value,
+      type: "spot",
+      isNPC: false,
+      sourceLine: "New"   // ✅ đánh dấu mới
+    });
   } else if (blockType === 3) {
-    data.spots.push({ classId: id, x1, y1, x2, y2, dir, range, count, value, type: "invasion", isNPC: false, sourceLine: -1 });
+    data.spots.push({
+      classId: id,
+      x1, y1, x2, y2, dir, range, count, value,
+      type: "invasion",
+      isNPC: false,
+      sourceLine: "New"   // ✅ đánh dấu mới
+    });
   }
 
   saveHistory();
-  renderMonsterList(document.getElementById("mobList"));
+  state.selection = null;
+  state.hover = null;
+  const mobList = document.getElementById("mobList");
+  if (mobList) refreshMonsterListUI(mobList);
   draw(document.getElementById("view"));
 }
 
@@ -239,7 +268,8 @@ function saveHistory() {
 
 function restoreFrom(snapshot) {
   state.monstersByMap = JSON.parse(snapshot);
-  renderMonsterList(document.getElementById("mobList"));
+  const mobList = document.getElementById("mobList");
+  if (mobList) refreshMonsterListUI(mobList);
   draw(document.getElementById("view"));
 }
 
@@ -275,7 +305,8 @@ function pasteSelection(x, y) {
 
   console.log("📋 Pasted:", c);
   saveHistory();
-  renderMonsterList(document.getElementById("mobList"));
+  const mobList = document.getElementById("mobList");
+  if (mobList) refreshMonsterListUI(mobList);
   draw(document.getElementById("view"));
 }
 
@@ -292,7 +323,8 @@ function deleteSelection() {
 
   state.selection = null;
   saveHistory();
-  renderMonsterList(document.getElementById("mobList"));
+  const mobList = document.getElementById("mobList");
+  if (mobList) refreshMonsterListUI(mobList);
   draw(document.getElementById("view"));
   console.log("🗑️ Deleted selection");
 }
