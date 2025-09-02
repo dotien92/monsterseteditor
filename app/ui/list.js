@@ -34,8 +34,8 @@ function renderGroup(title, singles, spots, kind){
   let html = `<div class="group"><div class="group-title">${title}</div>`;
 
   // Single
-  html += `<div class="subgroup"><div class="sub-title">Single (${singles.length})</div>`;
-  if(singles.length){
+  if (singles && singles.length){
+    html += `<div class="subgroup"><div class="sub-title">Single (${singles.length})</div>`;
     html += '<ul style="list-style:none; margin:0; padding:0 8px 6px 8px">';
     singles.forEach((m)=>{
       const lineLabel =
@@ -44,12 +44,11 @@ function renderGroup(title, singles, spots, kind){
           : `<span class="tag new">NEW</span>`;
       html += `<li class="list-row" data-kind="${kind}" data-idx="${m.idx}" style="padding:4px 0">${lineLabel} ${nameOf(m.classId)} — (x:${m.x ?? m.x1}, y:${m.y ?? m.y1})</li>`;
     });
-    html += '</ul>';
+    html += '</ul></div>';
   }
-  html += '</div>';
 
-  // Spot (render **chỉ khi có**)
-  if(spots.length){
+  // Spot
+  if (spots && spots.length){
     html += `<div class="subgroup"><div class="sub-title">Spot (${spots.length})</div>`;
     html += '<ul style="list-style:none; margin:0; padding:0 8px 6px 8px">';
     spots.forEach((m)=>{
@@ -62,7 +61,7 @@ function renderGroup(title, singles, spots, kind){
     html += '</ul></div>';
   }
 
-  html += '</div>'; // end group
+  html += '</div>';
   return html;
 }
 
@@ -79,22 +78,22 @@ export function renderMonsterList(container){
   }
 
   // Phân loại
-  const npcSingles = data.points.filter((p,i)=>p.type==='npc').map((p,i)=>({...p, idx:i}));
-  const battleSingles = data.points.filter((p,i)=>p.type==='battle').map((p,i)=>({...p, idx:i}));
+  const npcSingles  = data.points.filter((p)=>p.type==='npc').map((p,i)=>({...p, idx:i}));
+  const decoSingles = data.points.filter((p)=>p.type==='decoration').map((p,i)=>({...p, idx:i}));
+  const battleSingles = data.points.filter((p)=>p.type==='battle').map((p,i)=>({...p, idx:i}));
 
-  const monsterSingles = data.spots.filter((s,i)=>(s.type==='spot' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
-  const monsterSpots   = data.spots.filter((s,i)=>(s.type==='spot' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
+  const monsterSingles = data.spots.filter((s)=>(s.type==='spot' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
+  const monsterSpots   = data.spots.filter((s)=>(s.type==='spot' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
 
-  const invasionSingles = data.spots.filter((s,i)=>(s.type==='invasion' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
-  const invasionSpots   = data.spots.filter((s,i)=>(s.type==='invasion' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
-
-  const battleSpots = []; // block 4 không có spot
+  const invasionSingles = data.spots.filter((s)=>(s.type==='invasion' && (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
+  const invasionSpots   = data.spots.filter((s)=>(s.type==='invasion' && !(s.lockResize || (s.x1===s.x2 && s.y1===s.y2)))).map((s,i)=>({...s, idx:i}));
 
   let html = '';
   html += renderGroup('NPC (0)', npcSingles, [], 'point');
+  html += renderGroup('Decoration', decoSingles, [], 'point');
   html += renderGroup('Monster (1)', monsterSingles, monsterSpots, 'spot');
   html += renderGroup('Invasion (3)', invasionSingles, invasionSpots, 'spot');
-  html += renderGroup('Battle (4)', battleSingles, battleSpots, 'point');
+  html += renderGroup('Battle (4)', battleSingles, [], 'point');
 
   container.innerHTML = html || '<div class="muted" style="padding:8px">Không có dữ liệu.</div>';
 
@@ -115,7 +114,7 @@ export function bindListInteractions(container){
     if(kind && Number.isFinite(idx)){
       const prev = state.hover;
       if(!prev || prev.kind!==kind || prev.idx!==idx){
-        state.hover = /** @type {any} */ ({ kind, idx });
+        state.hover = { kind, idx };
         updateListHover(container);
         const canvas = byId('view');
         let raf = 0;

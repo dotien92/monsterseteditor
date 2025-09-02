@@ -22,8 +22,9 @@ export function renderInfoPanel(infoEl){
   if(sel.kind === 'point'){
     const p = data.points[sel.idx];
     if(!p){ infoEl.innerHTML = '<div class="muted">Không tìm thấy item.</div>'; return; }
-    const tag = p.isNPC ? 'npc' : 'monster';
-    const tagText = p.isNPC ? 'NPC' : 'Monster';
+    let tag = 'monster', tagText = 'Monster';
+    if(p.type==='npc'){ tag='npc'; tagText='NPC'; }
+    else if(p.type==='decoration'){ tag='decoration'; tagText='Decoration'; }
     rows.push(['Tên quái', nameOf(p.classId)]);
     rows.push(['Loại', `<span class="tag ${tag}">${tagText}</span>`]);
     rows.push(['Kiểu', 'Single']); // point luôn là single

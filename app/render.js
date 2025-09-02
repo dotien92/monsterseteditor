@@ -77,7 +77,13 @@ function drawOverlay(ctx, data, w, h){
   for(const p of data.points){
     const {px,py}=logicalToPixel(p.x + off.dx, p.y + off.dy, w, h);
     ctx.beginPath();
-    ctx.fillStyle=p.isNPC? getCSS('--npc') : getCSS('--danger');
+    if (p.type === 'npc') {
+      ctx.fillStyle = getCSS('--npc');          // xanh dương
+    } else if (p.type === 'decoration') {
+      ctx.fillStyle = getCSS('--deco');         // tím
+    } else {
+      ctx.fillStyle = getCSS('--danger');       // quái
+    }
     ctx.arc(px,py,3,0,Math.PI*2);
     ctx.fill();
   }

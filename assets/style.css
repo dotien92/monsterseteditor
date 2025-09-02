@@ -4,7 +4,8 @@
   --text: #e7e7ef;
   --muted: #9aa0ac;
   --danger: #ff6b6b;
-  --npc: #b97aff;
+  --npc: #4a90e2;   /* xanh dương cho NPC */
+  --deco: #b97aff;  /* tím cho Decoration */
   --spot: #ffb454;
 }
 html,

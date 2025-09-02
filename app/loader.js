@@ -14,22 +14,21 @@ export async function loadAll(){
     const mapId = entry.mapId != null ? Number(entry.mapId) : null;
     const url   = 'map/' + file;
     const meta  = await readImageMetaFromURL(url);
-
     const name = entry.name ?? file.replace(/^\d+_/, "").replace(/\.png$/i, "");
 
     // giữ thông tin cho render
     state.images.push({ name: file, url: meta.url, mapId, w: meta.w, h: meta.h });
-
     // giữ thông tin map (dùng khi Save)
     state.maps.push({ id: mapId, name, file });
   }
 
   // 2) Monster.txt + MonsterSetBase.txt
-  const [monTxt, msbTxt] = await Promise.all([
+  const [monTxt, msbTxt, decoJson] = await Promise.all([
     fetchText(CONFIG.PATHS.MONSTER),
     fetchText(CONFIG.PATHS.MSB),
+    fetchJSON(CONFIG.PATHS.DECORATION)
   ]);
-
+  state.decorationIds = new Set(decoJson); 
   parseMonsterTxt(monTxt);
   parseMSB(msbTxt);
 }
@@ -86,7 +85,14 @@ export function parseMSB(txt){
       const y   = Number(t[4]);
       if (![mob,map,x,y].every(Number.isFinite)) continue;
       const b = ensure(map);
-      b.points.push({ classId: mob, x, y, isNPC: true, type: 'npc', sourceLine: ln });
+      const isDeco = state.decorationIds?.has(mob);
+      b.points.push({
+        classId: mob,
+        x, y,
+        isNPC: !isDeco,
+        type: isDeco ? 'decoration' : 'npc',
+        sourceLine: ln
+      });
     }
     else if (section === 1){
       // 1: <ClassId> <MapId> <Dis> <X1> <Y1> <X2> <Y2> <Dir> <Count>

@@ -201,10 +201,24 @@ function addPointMonster(blockType, id, x, y, range, count, value, dir) {
   const data = state.monstersByMap[mapId] ||= { points: [], spots: [] };
 
   if (blockType === 0) {
-    data.points.push({ classId: id, x, y, dir, range, isNPC: true, type: "npc", sourceLine: "New" });
+    const isDeco = state.decorationIds?.has(id);
+    data.points.push({
+      classId: id,
+      x, y, dir, range,
+      isNPC: !isDeco,
+      type: isDeco ? "decoration" : "npc",
+      sourceLine: "New"
+    });
   } else if (blockType === 4) {
-    data.points.push({ classId: id, x, y, dir, range, isNPC: false, type: "battle", sourceLine: "New" });
+    data.points.push({
+      classId: id,
+      x, y, dir, range,
+      isNPC: false,
+      type: "battle",
+      sourceLine: "New"
+    });
   }
+
 
   saveHistory();
   refreshUI();
