@@ -22,6 +22,7 @@ export function draw(canvas){
       drawOverlay(ctx, data, canvas.width, canvas.height);
       drawHover(ctx, data, canvas.width, canvas.height);
       drawSelection(ctx, data, canvas.width, canvas.height);
+      drawPreview(ctx, canvas.width, canvas.height); // 👈 preview
     }
     return;
   }
@@ -56,6 +57,7 @@ export function draw(canvas){
   drawOverlay(ctx, data, canvas.width, canvas.height);
   drawHover(ctx, data, canvas.width, canvas.height);
   drawSelection(ctx, data, canvas.width, canvas.height);
+  drawPreview(ctx, canvas.width, canvas.height); // 👈 preview
 }
 
 // SWAP X↔Y để overlay khớp toạ độ file
@@ -168,6 +170,30 @@ function drawSelection(ctx, data, w, h){
   }
   ctx.restore();
 }
+
 function drawHandle(ctx, cx, cy){
   ctx.fillRect(cx - HANDLE, cy - HANDLE, HANDLE*2, HANDLE*2);
+}
+
+/* === Preview khi kéo thêm spot === */
+function drawPreview(ctx, w, h){
+  if(!state.dragData || state.dragData.currentX == null) return;
+  const { startX, startY, currentX, currentY } = state.dragData;
+
+  const sx = (startY / CONFIG.GRID_SIZE) * w;
+  const sy = (startX / CONFIG.GRID_SIZE) * h;
+  const ex = (currentY / CONFIG.GRID_SIZE) * w;
+  const ey = (currentX / CONFIG.GRID_SIZE) * h;
+
+  const x = Math.min(sx, ex), y = Math.min(sy, ey);
+  const ww = Math.abs(ex - sx), hh = Math.abs(ey - sy);
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,180,84,0.9)';
+  ctx.fillStyle   = 'rgba(255,180,84,0.25)';
+  ctx.setLineDash([4,2]);
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x,y,ww,hh);
+  ctx.fillRect(x,y,ww,hh);
+  ctx.restore();
 }
