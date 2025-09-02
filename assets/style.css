@@ -3,10 +3,13 @@
   --panel: #141420;
   --text: #e7e7ef;
   --muted: #9aa0ac;
-  --danger: #ff6b6b;
-  --npc: #4a90e2;   /* xanh dương cho NPC */
-  --deco: #b97aff;  /* tím cho Decoration */
-  --spot: #ffb454;
+
+  /* màu theo nhóm */
+  --npc: #4a90e2;        /* NPC xanh dương */
+  --deco: #b97aff;       /* Decoration tím */
+  --danger: #ff6b6b;     /* Monster + Battle */
+  --spot: #ff6b6b;       /* Spot cùng màu Monster */
+  --invasion: #3cb371;   /* Invasion xanh lá */
 }
 html,
 body {
@@ -70,17 +73,10 @@ main {
   height: 10px;
   border-radius: 50%;
 }
-.dot.danger {
-  background: var(--danger);
-}
-.dot.npc {
-  background: var(--npc);
-}
-.box.spot {
+.box {
   width: 12px;
   height: 12px;
-  background: color-mix(in srgb, var(--spot) 30%, transparent);
-  border: 1px solid var(--spot);
+  border: 1px solid;
   border-radius: 2px;
 }
 .chip {
@@ -91,6 +87,21 @@ main {
   border-radius: 999px;
   border: 1px solid #23233a;
 }
+
+/* === Legend Colors === */
+.dot.npc { background: var(--npc); }
+.dot.deco { background: var(--deco); }
+.dot.danger { background: var(--danger); } /* Monster + Battle */
+.box.spot {
+  border-color: var(--spot);
+  background: color-mix(in srgb, var(--spot) 30%, transparent);
+}
+.dot.invasion { background: var(--invasion); }
+.box.invasion {
+  border-color: var(--invasion);
+  background: color-mix(in srgb, var(--invasion) 30%, transparent);
+}
+
 button {
   padding: 8px 12px;
   border-radius: 8px;
@@ -203,24 +214,29 @@ canvas {
   margin-right: 6px;
 }
 .tag.npc {
-  border-color: #7f62b8;
-  background: rgba(185, 122, 255, 0.12);
-  color: #d7b8ff;
+  border-color: var(--npc);
+  background: color-mix(in srgb, var(--npc) 15%, transparent);
+  color: var(--npc);
 }
 .tag.monster {
-  border-color: #764646;
-  background: rgba(255, 107, 107, 0.1);
-  color: #ffb1b1;
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+  color: var(--danger);
 }
 .tag.invasion {
-  border-color: #9a6a2b;
-  background: rgba(255, 180, 84, 0.12);
-  color: #ffd7a4;
+  border-color: var(--invasion);
+  background: color-mix(in srgb, var(--invasion) 15%, transparent);
+  color: var(--invasion);
 }
 .tag.battle {
-  border-color: #3d6c7a;
-  background: rgba(136, 224, 255, 0.12);
-  color: #c7f0ff;
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+  color: var(--danger);
+}
+.tag.deco {
+  border-color: var(--deco);
+  background: color-mix(in srgb, var(--deco) 15%, transparent);
+  color: var(--deco);
 }
 
 /* Stats panel */
@@ -524,7 +540,7 @@ canvas {
   position: sticky;
   top: 0;
   z-index: 5;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4); /* 👈 thêm bóng mờ */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 #mobList .subgroup {
   padding: 4px 0;
@@ -537,10 +553,10 @@ canvas {
   border-left: 3px solid #2a2a43;
   margin: 2px 0;
   position: sticky;
-  top: 27px; /* đặt ngay dưới group-title */
+  top: 27px;
   background: #141420;
   z-index: 4;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.35); /* 👈 thêm bóng mờ */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35);
 }
 .sub-count {
   font-size: 11px;

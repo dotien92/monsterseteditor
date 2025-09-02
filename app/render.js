@@ -22,12 +22,11 @@ export function draw(canvas){
       drawOverlay(ctx, data, canvas.width, canvas.height);
       drawHover(ctx, data, canvas.width, canvas.height);
       drawSelection(ctx, data, canvas.width, canvas.height);
-      drawPreview(ctx, canvas.width, canvas.height); // 👈 preview
+      drawPreview(ctx, canvas.width, canvas.height);
     }
     return;
   }
 
-  // Kích thước canvas dựa trên natural size của ảnh * scale
   canvas.width  = Math.max(1, Math.round(imgEntry.w * scale));
   canvas.height = Math.max(1, Math.round(imgEntry.h * scale));
 
@@ -38,7 +37,7 @@ export function draw(canvas){
     img.src = imgEntry.url;
     img.onload = ()=> {
       imgCache.set(imgEntry.url, img);
-      draw(canvas); // vẽ lại lần đầu khi ảnh cache xong
+      draw(canvas);
     };
   }
   if (img.complete && img.naturalWidth){
@@ -53,14 +52,12 @@ export function draw(canvas){
       ctx.drawImage(img, 0,0, canvas.width, canvas.height);
     }
   }
-  // Vẽ overlay/hover/selection (nếu ảnh chưa xong, frame sau sẽ đè)
   drawOverlay(ctx, data, canvas.width, canvas.height);
   drawHover(ctx, data, canvas.width, canvas.height);
   drawSelection(ctx, data, canvas.width, canvas.height);
-  drawPreview(ctx, canvas.width, canvas.height); // 👈 preview
+  drawPreview(ctx, canvas.width, canvas.height);
 }
 
-// SWAP X↔Y để overlay khớp toạ độ file
 function logicalToPixel(x,y,w,h){
   const sx = w/CONFIG.GRID_SIZE;
   const sy = h/CONFIG.GRID_SIZE;
@@ -73,12 +70,11 @@ function drawOverlay(ctx, data, w, h){
   const mapId = state.currentMapId;
   const off = (mapId!=null ? state.calibrationByMap[mapId] : null) || {dx:0,dy:0};
 
-  // ✅ lấy filter state (mặc định bật monster + battle)
   const f = state.filters || {
     npc:false, decoration:false, monster:true, invasion:false, battle:true
   };
 
-  // points
+  // ✅ points
   for(const p of data.points){
     if ((p.type==='npc'        && !f.npc) ||
         (p.type==='decoration' && !f.decoration) ||
@@ -86,27 +82,43 @@ function drawOverlay(ctx, data, w, h){
 
     const {px,py}=logicalToPixel(p.x + off.dx, p.y + off.dy, w, h);
     ctx.beginPath();
+
     if (p.type === 'npc') {
-      ctx.fillStyle = getCSS('--npc');          // xanh dương
+      ctx.fillStyle = getCSS('--npc');      // xanh dương
     } else if (p.type === 'decoration') {
-      ctx.fillStyle = getCSS('--deco');         // tím
+      ctx.fillStyle = getCSS('--deco');     // tím
+    } else if (p.type === 'battle') {
+      ctx.fillStyle = getCSS('--danger');   // battle = đỏ
+    } else if (p.type === 'invasion') {
+      ctx.fillStyle = getCSS('--invasion'); // invasion single = xanh lá
     } else {
-      ctx.fillStyle = getCSS('--danger');       // quái
+      ctx.fillStyle = getCSS('--danger');   // monster single = đỏ
     }
+
     ctx.arc(px,py,3,0,Math.PI*2);
     ctx.fill();
   }
 
-  // spots
+  // ✅ spots
   ctx.lineWidth=1;
   for (const s of data.spots) {
     if ((s.type==='spot'     && !f.monster) ||
         (s.type==='invasion' && !f.invasion)) continue;
 
+    let strokeColor, fillColor;
+
+    if (s.type === 'invasion') {
+      strokeColor = getCSS('--invasion');
+      fillColor   = hexWithAlpha(getCSS('--invasion'), 0.3);
+    } else {
+      strokeColor = getCSS('--danger');
+      fillColor   = hexWithAlpha(getCSS('--danger'), 0.3);
+    }
+
     if (s.lockResize) {
       const p = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
       ctx.beginPath();
-      ctx.fillStyle = getCSS('--danger');
+      ctx.fillStyle = strokeColor;
       ctx.arc(p.px, p.py, 3, 0, Math.PI * 2);
       ctx.fill();
       continue;
@@ -119,12 +131,12 @@ function drawOverlay(ctx, data, w, h){
 
     if (ww === 0 && hh === 0) {
       ctx.beginPath();
-      ctx.fillStyle = getCSS('--danger');
+      ctx.fillStyle = strokeColor;
       ctx.arc(x, y, 3, 0, Math.PI * 2);
       ctx.fill();
     } else {
-      ctx.strokeStyle = getCSS('--spot');
-      ctx.fillStyle = hexWithAlpha(getCSS('--spot'), 0.3);
+      ctx.strokeStyle = strokeColor;
+      ctx.fillStyle   = fillColor;
       ctx.strokeRect(x, y, ww, hh);
       ctx.fillRect(x, y, ww, hh);
     }
@@ -153,13 +165,11 @@ function drawHover(ctx, data, w, h){
     const s = data.spots[state.hover.idx];
     if(s){
       if (s.lockResize || (s.x1===s.x2 && s.y1===s.y2)) {
-        // ✅ single spot → highlight bằng vòng tròn
         const p = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
         ctx.beginPath();
         ctx.arc(p.px, p.py, 7, 0, Math.PI*2);
         ctx.stroke();
       } else {
-        // vùng spot bình thường
         const a=logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
         const b=logicalToPixel(s.x2 + off.dx, s.y2 + off.dy, w, h);
         const x=Math.min(a.px,b.px), y=Math.min(a.py,b.py);
@@ -194,7 +204,6 @@ function drawSelection(ctx, data, w, h){
     if(!s) { ctx.restore(); return; }
 
     if(s.lockResize){
-      // 🔒 single spot → vẽ giống point
       const p = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
       ctx.beginPath();
       ctx.arc(p.px, p.py, 6, 0, Math.PI*2);
@@ -205,8 +214,6 @@ function drawSelection(ctx, data, w, h){
       const x=Math.min(a.px,b.px), y=Math.min(a.py,b.py);
       const ww=Math.abs(a.px-b.px), hh=Math.abs(a.py-b.py);
       ctx.strokeRect(x,y,ww,hh);
-
-      // 4 tay cầm
       drawHandle(ctx, x, y);
       drawHandle(ctx, x+ww, y);
       drawHandle(ctx, x, y+hh);
@@ -220,7 +227,6 @@ function drawHandle(ctx, cx, cy){
   ctx.fillRect(cx - HANDLE, cy - HANDLE, HANDLE*2, HANDLE*2);
 }
 
-/* === Preview khi kéo thêm spot === */
 function drawPreview(ctx, w, h){
   if(!state.dragData || state.dragData.currentX == null) return;
   const { startX, startY, currentX, currentY } = state.dragData;
