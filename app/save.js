@@ -74,3 +74,19 @@ export function downloadFile(filename, content) {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+export async function saveToServer() {
+  const content = exportMonsterSetBase();
+  const formData = new FormData();
+  formData.append("content", content);
+
+  const res = await fetch("monster/save_msb.php", {
+    method: "POST",
+    body: formData
+  });
+
+  if (!res.ok) {
+    throw new Error("Save failed: " + res.status);
+  }
+  return await res.text();
+}

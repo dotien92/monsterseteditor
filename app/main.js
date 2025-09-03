@@ -11,14 +11,27 @@ import { draw } from './render.js';
 import { state } from './state.js';
 import { renderMonsterFilters } from './ui/list.js';
 import { initAddMonsterUI, bindCanvasForAddMonster } from "./ui/addmonster.js";
-import { exportMonsterSetBase, downloadFile } from "./save.js";
+import { saveToServer, exportMonsterSetBase, downloadFile } from "./save.js";
 
 window.addEventListener('DOMContentLoaded', async ()=>{
   bindCanvasForAddMonster(document.getElementById("view"));
-  document.getElementById("saveMonsterBtn").addEventListener("click", () => {
+  
+  // 📂 Nút tải file MonsterSetBase.txt gốc từ server
+  document.getElementById("downloadMonsterBtn").addEventListener("click", () => {
     const txt = exportMonsterSetBase();
     downloadFile("MonsterSetBase.txt", txt);
   });
+
+  // 💾 Nút lưu file MonsterSetBase.txt (xuất thay đổi hiện tại)
+  document.getElementById("saveMonsterBtn").addEventListener("click", async () => {
+    try {
+      const result = await saveToServer();
+      alert("Đã lưu thành công: " + result);
+    } catch (e) {
+      alert("Lưu thất bại: " + e.message);
+    }
+  });
+
   const { mapSelect, canvas, mobList } = bindUI();
   bindListInteractions(mobList);
   const filterBox = document.getElementById("mobFilters");
