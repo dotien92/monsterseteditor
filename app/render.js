@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { CONFIG } from './config.js';
 import { hexWithAlpha } from './utils.js';
 
-const HANDLE = 7; // px kích thước tay cầm
+const HANDLE = 2; // px kích thước tay cầm
 const imgCache = new Map(); // cache ảnh theo URL
 
 export function draw(canvas){

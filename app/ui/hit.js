@@ -42,8 +42,8 @@ export function hitTest(ev, canvas){
   const mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
   const W = canvas.width, H = canvas.height;
 
-  const PICK_RADIUS = 10;
-  const HANDLE = 7;
+  const PICK_RADIUS = 5;
+  const HANDLE = 2;
 
   // ========== 1) Points ==========
   for (let i=0; i<data.points.length; i++) {

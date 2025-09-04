@@ -10,9 +10,15 @@ import { renderInfoPanel } from './info.js';
 import { gridFromMouse, rawFromCalibrated, hitTest } from './hit.js';
 import { loadCalibFromStorage, attachCalibrateUI } from './calibrate.js';
 import { attachScaleUI } from './scale.js';
-import { renderMapStats } from './stats.js';   // ✅ thêm
+import { renderMapStats } from './stats.js';  
+
 
 const gclamp = (v)=> Math.max(0, Math.min(CONFIG.GRID_SIZE - 1, Math.round(v)));
+function saveHistory() {
+  const snapshot = JSON.stringify(state.monstersByMap);
+  state.history.push(snapshot);
+  state.future = [];
+}
 
 function isVisibleByFilter(hit) {
   if (!hit) return false;
@@ -149,6 +155,7 @@ export default function bindUI(){
       if(hit.kind==='spot' && hit.resize){
         const mapId = state.currentMapId;
         const s = state.monstersByMap[mapId]?.spots[hit.idx];
+        saveHistory();
         if(s?.lockResize){
           console.log("🔒 Spot này bị khoá resize, chỉ cho phép move");
           // bỏ qua resize, xử lý move ở nhánh else
@@ -177,6 +184,7 @@ export default function bindUI(){
       const mapId = state.currentMapId;
       const data = state.monstersByMap[mapId];
       const s = hit.kind==='spot' ? data?.spots?.[hit.idx] : null;
+      saveHistory();
       if(s){
         const { Xc, Yc } = gridFromMouse(ev, canvas);
         const { xr, yr } = rawFromCalibrated(Xc, Yc);
