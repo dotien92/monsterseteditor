@@ -39,21 +39,7 @@
         <button id="saveMonsterBtn">💾 Lưu vào file</button>
       </div>
       
-      <!-- ✅ Điều khiển cố định ở đáy thẻ (không còn nổi bên phải) -->
-      <div class="left-controls">
-        <div class="fc-row">
-          <label for="scale" class="muted">Scale</label>
-          <button id="scaleMinus" title="Giảm">−</button>
-          <input id="scale" type="range" min="0.25" max="1" step="0.05" value="1" />
-          <button id="scalePlus" title="Tăng">+</button>
-          <span id="scaleVal" class="muted w48 right">100%</span>
-        </div>
-        <div class="fc-row">
-          <button id="calibToggle" title="Bật/tắt calibrate">Calibrate</button>
-          <button id="calibReset" title="Xoá offset map hiện tại">Reset</button>
-          <span id="coordReadout" class="coords">(x, y) —</span>
-        </div>
-      </div>
+
     </section>
 
     <!-- CỘT PHẢI: Danh sách + Canvas -->
@@ -71,8 +57,24 @@
           </div>
         </div>
 
-        <div>
+        <div class="canvas-wrapper">
           <canvas id="view" width="1024" height="1024"></canvas>
+        </div>
+
+        <!-- ✅ Controls nằm dưới canvas -->
+        <div class="map-controls">
+          <div class="fc-row">
+            <label for="scale" class="muted">Scale</label>
+            <button id="scaleMinus" title="Giảm">−</button>
+            <input id="scale" type="range" min="0.25" max="2" step="0.05" value="1" />
+            <button id="scalePlus" title="Tăng">+</button>
+            <span id="scaleVal" class="muted w48 right">100%</span>
+          </div>
+          <div class="fc-row" style="display:none;">
+            <button id="calibToggle" title="Bật/tắt calibrate">Calibrate</button>
+            <button id="calibReset" title="Xoá offset map hiện tại">Reset</button>
+            <span id="coordReadout" class="coords">(x, y) —</span>
+          </div>
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@
 
 import { state } from '../state.js';
 
-const MIN = 0.25, MAX = 1.0, STEP = 0.05;
+const MIN = 0.25, MAX = 2.0, STEP = 0.05;
 const clamp = (v)=>Math.max(MIN, Math.min(MAX, v));
 const roundStep = (v)=> Math.round(v/STEP)*STEP;
 
