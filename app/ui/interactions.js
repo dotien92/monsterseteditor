@@ -93,7 +93,7 @@ export default function bindUI(){
     }
   });
 
-  // readout toạ độ (đã calibrate)
+  // readout tọa độ + hiển thị tên monster khi hover
   canvas.addEventListener('mousemove', (ev)=>{
     if(state.currentMapId == null) return;
     const rect = canvas.getBoundingClientRect();
@@ -107,8 +107,31 @@ export default function bindUI(){
     let Yc = Math.round(Ygrid + off.dy);
     Xc = Math.max(0, Math.min(max, Xc));
     Yc = Math.max(0, Math.min(max, Yc));
+
+    // mặc định text là tọa độ
+    let tooltipText = `(${Xc}, ${Yc})`;
+
+    // nếu hover trúng point/spot -> thêm tên quái
+    let hit = hitTest(ev, canvas);
+    if (isVisibleByFilter(hit)) {
+      const data = state.monstersByMap[state.currentMapId];
+      if (hit.kind === "point") {
+        const p = data.points[hit.idx];
+        if (p) {
+          const name = state.classes[p.classId]?.name || p.classId;
+          tooltipText = `${name} (${Xc}, ${Yc})`;
+        }
+      } else if (hit.kind === "spot") {
+        const s = data.spots[hit.idx];
+        if (s) {
+          const name = state.classes[s.classId]?.name || s.classId;
+          tooltipText = `${name} (${Xc}, ${Yc})`;
+        }
+      }
+    }
+
     coordReadout.textContent = `(x,y) = (${Xc}, ${Yc})`;
-    updateTooltip(Xc, Yc, ev);
+    updateTooltip(tooltipText, ev);
   });
 
 
@@ -180,6 +203,7 @@ export default function bindUI(){
     if(!state.dragging || !state.selection){
       let h = hitTest(ev, canvas);
       if (!isVisibleByFilter(h)) h = null;
+
       if(h && h.kind==='spot' && h.resize){
         const mapId = state.currentMapId;
         const s = state.monstersByMap[mapId]?.spots[h.idx];

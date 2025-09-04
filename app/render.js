@@ -317,9 +317,9 @@ tooltipEl.className = "coord-tooltip";
 tooltipEl.style.display = "none";
 document.body.appendChild(tooltipEl);
 
-export function updateTooltip(x, y, ev) {
-  tooltipEl.textContent = `(${x}, ${y})`;
-  tooltipEl.style.left = ev.clientX + "px";
+export function updateTooltip(text, ev) {
+  tooltipEl.textContent = text;
+  tooltipEl.style.left = ev.clientX + "px"; // lệch khỏi cursor
   tooltipEl.style.top  = ev.clientY + "px";
   tooltipEl.style.display = "block";
 }
