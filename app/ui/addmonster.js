@@ -11,7 +11,7 @@ export function initAddMonsterUI() {
   if (!panel) return;
 
   const options = Object.entries(state.classes)
-    .map(([id, c]) => `<option value="${id}">${id} - ${c.name}</option>`)
+    .map(([id, c]) => `<option value="${id}">${c.name}</option>`)
     .join("");
 
   panel.innerHTML = `
@@ -19,7 +19,7 @@ export function initAddMonsterUI() {
     <label>Loại block:
       <select class="blockType">
         <option value="0">Type 0: NPC & Decoration (trap, light..)</option>
-        <option value="1">Typr 1: Monster</option>
+        <option value="1">Type 1: Monster</option>
         <option value="3">Type 3: Invasion (Golden dragon...)</option>
         <option value="4">Type 4: Event (Devil, BloodCastle)</option>
       </select>
@@ -57,7 +57,7 @@ export function initAddMonsterUI() {
       `;
     } else if (blockType === 1) {
       html += `
-        <label>Range: <input class="range" type="number" min="0" max="255" value="0"/> <small>(phạm vi)</small></label>
+        <label>Range: <input class="range" type="number" min="0" max="255" value="10"/> <small>(phạm vi)</small></label>
         <label>Dir: <input class="dir" type="number" min="0" max="360" value="0"/> <small>(hướng xoay)</small></label>
         <label>Count: <input class="count" type="number" min="1" max="500" value="1"/> <small>(số lượng)</small></label>
       `;
