@@ -74,7 +74,57 @@ function drawOverlay(ctx, data, w, h){
     npc:false, decoration:false, monster:true, invasion:false, battle:true
   };
 
-  // ✅ points
+  ctx.lineWidth = 1;
+
+  // 🟢 1. Spot block 3 (invasion) dưới cùng
+  for (const s of data.spots) {
+    if (s.type !== 'invasion' || s.lockResize) continue;
+    if (!f.invasion) continue;
+
+    const strokeColor = getCSS('--invasion');
+    const fillColor   = hexWithAlpha(getCSS('--invasion'), 0.3);
+
+    const a = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
+    const b = logicalToPixel(s.x2 + off.dx, s.y2 + off.dy, w, h);
+    const x = Math.min(a.px, b.px), y = Math.min(a.py, b.py);
+    const ww = Math.abs(a.px - b.px), hh = Math.abs(a.py - b.py);
+
+    if (ww === 0 && hh === 0) {
+      ctx.fillStyle = strokeColor;
+      ctx.fillRect(x - 3, y - 3, 6, 6);
+    } else {
+      ctx.strokeStyle = strokeColor;
+      ctx.fillStyle   = fillColor;
+      ctx.strokeRect(x, y, ww, hh);
+      ctx.fillRect(x, y, ww, hh);
+    }
+  }
+
+  // 🟢 2. Spot block 1 (monster area)
+  for (const s of data.spots) {
+    if (s.type !== 'spot' || s.lockResize) continue;
+    if (!f.monster) continue;
+
+    const strokeColor = getCSS('--danger');
+    const fillColor   = hexWithAlpha(getCSS('--danger'), 0.3);
+
+    const a = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
+    const b = logicalToPixel(s.x2 + off.dx, s.y2 + off.dy, w, h);
+    const x = Math.min(a.px, b.px), y = Math.min(a.py, b.py);
+    const ww = Math.abs(a.px - b.px), hh = Math.abs(a.py - b.py);
+
+    if (ww === 0 && hh === 0) {
+      ctx.fillStyle = strokeColor;
+      ctx.fillRect(x - 3, y - 3, 6, 6);
+    } else {
+      ctx.strokeStyle = strokeColor;
+      ctx.fillStyle   = fillColor;
+      ctx.strokeRect(x, y, ww, hh);
+      ctx.fillRect(x, y, ww, hh);
+    }
+  }
+
+  // 🟢 3. Points (block 0, 4)
   for(const p of data.points){
     if ((p.type==='npc'        && !f.npc) ||
         (p.type==='decoration' && !f.decoration) ||
@@ -84,68 +134,31 @@ function drawOverlay(ctx, data, w, h){
     ctx.beginPath();
 
     if (p.type === 'npc') {
-      ctx.fillStyle = getCSS('--npc');      // xanh dương
+      ctx.fillStyle = getCSS('--npc');
     } else if (p.type === 'decoration') {
-      ctx.fillStyle = getCSS('--deco');     // tím
+      ctx.fillStyle = getCSS('--deco');
     } else if (p.type === 'battle') {
-      ctx.fillStyle = getCSS('--danger');   // battle = đỏ
-    } else if (p.type === 'invasion') {
-      ctx.fillStyle = getCSS('--invasion'); // invasion single = xanh lá
+      ctx.fillStyle = getCSS('--danger');
     } else {
-      ctx.fillStyle = getCSS('--danger');   // monster single = đỏ
+      ctx.fillStyle = getCSS('--danger'); // fallback
     }
 
     ctx.arc(px,py,3,0,Math.PI*2);
     ctx.fill();
   }
 
-  // ✅ spots
-  ctx.lineWidth=1;
+  // 🟢 4. Spot single (lockResize=true) trên cùng
   for (const s of data.spots) {
-    if ((s.type==='spot'     && !f.monster) ||
+    if (!s.lockResize) continue;
+    if ((s.type==='spot' && !f.monster) ||
         (s.type==='invasion' && !f.invasion)) continue;
 
-    let strokeColor, fillColor;
-
-    if (s.type === 'invasion') {
-      strokeColor = getCSS('--invasion');
-      fillColor   = hexWithAlpha(getCSS('--invasion'), 0.3);
-    } else {
-      strokeColor = getCSS('--danger');
-      fillColor   = hexWithAlpha(getCSS('--danger'), 0.3);
-    }
-
-    if (s.lockResize) {
-      const p = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
-      ctx.beginPath();
-      ctx.fillStyle = strokeColor;
-      ctx.arc(p.px, p.py, 3, 0, Math.PI * 2);
-      ctx.fill();
-      continue;
-    }
-
-    const a = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
-    const b = logicalToPixel(s.x2 + off.dx, s.y2 + off.dy, w, h);
-    const x = Math.min(a.px, b.px), y = Math.min(a.py, b.py);
-    const ww = Math.abs(a.px - b.px), hh = Math.abs(a.py - b.py);
-
-      if (ww === 0 && hh === 0) {
-        ctx.fillStyle = strokeColor;
-        if (s.lockResize) {
-          // single -> hình tròn
-          ctx.beginPath();
-          ctx.arc(x, y, 3, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          // spot click -> hình vuông
-          ctx.fillRect(x - 3, y - 3, 6, 6);
-        }
-      } else {
-      ctx.strokeStyle = strokeColor;
-      ctx.fillStyle   = fillColor;
-      ctx.strokeRect(x, y, ww, hh);
-      ctx.fillRect(x, y, ww, hh);
-    }
+    const strokeColor = (s.type === 'invasion') ? getCSS('--invasion') : getCSS('--danger');
+    const p = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
+    ctx.beginPath();
+    ctx.fillStyle = strokeColor;
+    ctx.arc(p.px, p.py, 3, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 
