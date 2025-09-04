@@ -277,3 +277,18 @@ export default function bindUI(){
 
   return { mapSelect, canvas, mobList };
 }
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Alt" || e.key === "Option") {
+    if (!state.showLabels) {
+      state.showLabels = true;
+      draw(document.getElementById("view"));
+    }
+  }
+});
+document.addEventListener("keyup", (e) => {
+  if (e.key === "Alt" || e.key === "Option") {
+    state.showLabels = false;
+    draw(document.getElementById("view"));
+  }
+});

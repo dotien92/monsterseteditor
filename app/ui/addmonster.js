@@ -34,7 +34,7 @@ export function initAddMonsterUI() {
       <select class="monsterId">${options}</select>
     </label>
     <div class="params"></div>
-    <button class="addBtn primary">➕ Thêm Quái</button>
+    <button class="addBtn primary">➕ Thêm Quái (A)</button>
   `;
 
   const blockSelect = panel.querySelector(".blockType");
@@ -114,7 +114,7 @@ export function initAddMonsterUI() {
       state.addingMonster = null;
       state.dragData = null;
       hideTooltip();
-      addBtn.textContent = "➕ Thêm Quái";
+      addBtn.textContent = "➕ Thêm Quái (A)";
       addBtn.classList.remove("adding");
       draw(document.getElementById("view"));
       return;
@@ -187,7 +187,7 @@ export function bindCanvasForAddMonster(canvas) {
       state.dragData = null;
       const addBtn = document.querySelector("#monsterAddPanel .addBtn");
       if (addBtn) {
-        addBtn.textContent = "➕ Thêm Quái";
+        addBtn.textContent = "➕ Thêm Quái (A)";
         addBtn.classList.remove("adding");
       }
       hideTooltip();
@@ -453,7 +453,7 @@ document.addEventListener("keydown", (e) => {
       hideTooltip();
       const addBtn = document.querySelector("#monsterAddPanel .addBtn");
       if (addBtn) {
-        addBtn.textContent = "➕ Thêm Quái";
+        addBtn.textContent = "➕ Thêm Quái (A)";
         addBtn.classList.remove("adding");
       }
       draw(document.getElementById("view"));
@@ -514,3 +514,15 @@ function refreshUI() {
 function getCSS(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
+
+// 🟢 Shortcut: nhấn phím A để bật/tắt chế độ thêm quái
+document.addEventListener("keydown", (e) => {
+  // chỉ nhận đúng phím "a", không kèm ctrl/alt/shift/meta
+  if (e.key.toLowerCase() === "a" && !e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey) {
+    const addBtn = document.querySelector("#monsterAddPanel .addBtn");
+    if (addBtn) {
+      addBtn.click();   // giả lập bấm nút
+      e.preventDefault();
+    }
+  }
+});

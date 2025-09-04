@@ -20,6 +20,7 @@ export function draw(canvas){
     canvas.height = Math.max(1, Math.round(baseH * scale));
     if(data){
       drawOverlay(ctx, data, canvas.width, canvas.height);
+      drawLabels(ctx, data, canvas.width, canvas.height);
       drawHover(ctx, data, canvas.width, canvas.height);
       drawSelection(ctx, data, canvas.width, canvas.height);
       drawPreview(ctx, canvas.width, canvas.height);
@@ -53,6 +54,7 @@ export function draw(canvas){
     }
   }
   drawOverlay(ctx, data, canvas.width, canvas.height);
+  drawLabels(ctx, data, canvas.width, canvas.height);
   drawHover(ctx, data, canvas.width, canvas.height);
   drawSelection(ctx, data, canvas.width, canvas.height);
   drawPreview(ctx, canvas.width, canvas.height);
@@ -265,5 +267,45 @@ function drawPreview(ctx, w, h){
   ctx.lineWidth = 2;
   ctx.strokeRect(x,y,ww,hh);
   ctx.fillRect(x,y,ww,hh);
+  ctx.restore();
+}
+function drawLabels(ctx, data, w, h) {
+  if (!state.showLabels) return;
+  const mapId = state.currentMapId;
+  const off = (mapId != null ? state.calibrationByMap[mapId] : {dx:0,dy:0});
+
+  ctx.save();
+  ctx.fillStyle = "#fff";
+  ctx.font = "12px Arial";
+  ctx.textAlign = "center";
+
+  // Points
+  for (const p of data.points) {
+    const monsterName = state.classes[p.classId]?.name || p.classId;
+    const text = `${monsterName} (1)`;
+    const { px, py } = logicalToPixel(p.x + off.dx, p.y + off.dy, w, h);
+    ctx.fillText(text, px, py - 8);
+  }
+
+  // Spots
+  for (const s of data.spots) {
+    const monsterName = state.classes[s.classId]?.name || s.classId;
+    const count = s.count || 1;
+    const text = `${monsterName} (${count})`;
+
+    if (s.lockResize) {
+      // Single dạng spot
+      const { px, py } = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
+      ctx.fillText(text, px, py - 8);
+    } else {
+      // Spot vùng
+      const a = logicalToPixel(s.x1 + off.dx, s.y1 + off.dy, w, h);
+      const b = logicalToPixel(s.x2 + off.dx, s.y2 + off.dy, w, h);
+      const cx = (a.px + b.px) / 2;
+      const cy = (a.py + b.py) / 2;
+      ctx.fillText(text, cx, cy - 8);
+    }
+  }
+
   ctx.restore();
 }

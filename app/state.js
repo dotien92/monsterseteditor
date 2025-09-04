@@ -32,4 +32,5 @@ export const state = {
     invasion: false,
     battle: true
   },
+  showLabels: false,
 };
