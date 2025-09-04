@@ -17,14 +17,7 @@
     <section class="card card-left">
       <h2>Cấu hình &amp; Ghi chú</h2>
       <div class="content content-left">
-      <div class="legend" style="margin-bottom:10px">
-        <span class="chip"><span class="dot npc"></span> NPC (Single)</span>
-        <span class="chip"><span class="dot deco"></span> Decoration</span>
-        <span class="chip"><span class="dot danger"></span> Monster / Battle (Single)</span>
-        <span class="chip"><span class="box spot"></span> Monster Spot</span>
-        <span class="chip"><span class="dot invasion"></span> Invasion (Single Point)</span>
-        <span class="chip"><span class="box invasion"></span> Invasion (Spot)</span>
-      </div>
+        
         <!-- Chọn map -->
         <div class="stack gap-8">
           <div class="row gap-8">
@@ -36,6 +29,10 @@
           <div id="mapStats" class="stats-panel">
             <div class="muted">Chọn map để xem thống kê.</div>
           </div>
+        </div>
+        <div id="mobFilterPanel" class="panel" style="margin-top:12px">
+          <h3>Bộ lọc hiển thị</h3>
+          <div id="mobFilters"></div>
         </div>
       </div>
       <!-- ✅ Panel thêm quái (dưới stats, trên scale) -->
@@ -68,8 +65,7 @@
     <section class="card" style="grid-column:2/3;">
       <div class="content content-grid">
         <div>
-          <h3 class="muted" style="margin-top:0">Danh sách quái (map đang chọn)</h3>
-          <div id="mobFilters"></div>
+          <h3 class="muted" style="margin-top:0">Danh sách quái</h3>
           <div id="mobList">
             <div class="muted" style="padding:8px">Chưa có dữ liệu.</div>
           </div>

@@ -463,21 +463,6 @@ canvas {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Panel Thêm Quái ===== */
-#monsterAddPanel {
-  border: 1px solid #1d1d2b;
-  border-radius: 8px;
-  background: #0f0f19;
-  padding: 10px 12px;
-  font-size: 12px;
-}
-
-#monsterAddPanel h3 {
-  margin: 0 0 8px 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: #cbd5e1;
-}
 
 /* ===== Monster list panel ===== */
 #mobList {
@@ -668,4 +653,63 @@ canvas {
   font-size: 11px;
   color: #ffb454; /* vàng cam cảnh báo */
   opacity: 0.85;
+}
+
+/* Input trong info panel */
+.info-value input {
+  width: 80px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid #2a2a43;
+  background: #1a1a2d;
+  color: var(--text);
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.info-value input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 3px rgba(74,144,226,0.6);
+}
+
+#mapSelect {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #2a2a43;
+  background: #1a1a2d;
+  color: var(--text);
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+#mapSelect:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* Đồng bộ panel trong cột trái */
+#mapStats,
+#mobFilterPanel,
+#monsterAddPanel {
+  width: 100%;
+  border: 1px solid #1d1d2b;
+  border-radius: 8px;
+  background: #0f0f19;
+  padding: 10px 12px;
+  font-size: 12px;
+  box-sizing: border-box;
+  margin-top: 8px; /* giảm khoảng cách, đồng bộ */
+}
+
+/* Tiêu đề panel */
+#mapStats h3,
+#mobFilterPanel h3,
+#monsterAddPanel h3 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #cbd5e1;
 }

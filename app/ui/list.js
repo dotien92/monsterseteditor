@@ -28,7 +28,6 @@ export function renderMonsterFilters(container){
     <label class="filter-monster"><input type="checkbox" data-ft="monster" ${state.filters.monster ? 'checked' : ''}/> Monster</label>
     <label class="filter-invasion"><input type="checkbox" data-ft="invasion" ${state.filters.invasion ? 'checked' : ''}/> Invasion</label>
     <label class="filter-battle"><input type="checkbox" data-ft="battle" ${state.filters.battle ? 'checked' : ''}/> Battle</label>
-    <div class="filter-note">⚠️ Lưu ý: Nếu tắt filter, các monster vừa thêm có thể không hiển thị trên bản đồ.</div>
   `;
 
   container.querySelectorAll('input[type=checkbox]').forEach(chk=>{

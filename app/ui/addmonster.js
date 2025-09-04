@@ -52,26 +52,26 @@ export function initAddMonsterUI() {
     let html = "";
     if (blockType === 0) {
       html += `
-        <label>Range: <input class="range" type="number" min="0" max="255" value="0"/> <small>(phạm vi)</small></label>
-        <label>Dir: <input class="dir" type="number" min="0" max="360" value="0"/> <small>(hướng xoay)</small></label>
+        <label>Range: <input class="range" type="number" min="0" max="255" value="10"/> <small>(phạm vi)</small></label>
+        <label>Dir: <input class="dir" type="number" min="0" max="360" value="-1"/> <small>(hướng xoay)</small></label>
       `;
     } else if (blockType === 1) {
       html += `
         <label>Range: <input class="range" type="number" min="0" max="255" value="10"/> <small>(phạm vi)</small></label>
-        <label>Dir: <input class="dir" type="number" min="0" max="360" value="0"/> <small>(hướng xoay)</small></label>
+        <label>Dir: <input class="dir" type="number" min="0" max="360" value="-1"/> <small>(hướng xoay)</small></label>
         <label>Count: <input class="count" type="number" min="1" max="500" value="1"/> <small>(số lượng)</small></label>
       `;
     } else if (blockType === 3) {
       html += `
-        <label>Range: <input class="range" type="number" min="0" max="255" value="0"/> <small>(phạm vi)</small></label>
-        <label>Dir: <input class="dir" type="number" min="0" max="360" value="0"/> <small>(hướng xoay)</small></label>
+        <label>Range: <input class="range" type="number" min="0" max="255" value="10"/> <small>(phạm vi)</small></label>
+        <label>Dir: <input class="dir" type="number" min="0" max="360" value="-1"/> <small>(hướng xoay)</small></label>
         <label>Count: <input class="count" type="number" min="1" max="500" value="1"/> <small>(số lượng)</small></label>
         <label>Value: <input class="value" type="number" min="0" max="999" value="0"/> <small>(giá trị)</small></label>
       `;
     } else if (blockType === 4) {
       html += `
-        <label>Range: <input class="range" type="number" min="0" max="255" value="0"/> <small>(phạm vi)</small></label>
-        <label>Dir: <input class="dir" type="number" min="0" max="360" value="0"/> <small>(hướng xoay)</small></label>
+        <label>Range: <input class="range" type="number" min="0" max="255" value="10"/> <small>(phạm vi)</small></label>
+        <label>Dir: <input class="dir" type="number" min="0" max="360" value="-1"/> <small>(hướng xoay)</small></label>
       `;
     }
     paramsDiv.innerHTML = html;
