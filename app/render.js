@@ -282,7 +282,7 @@ function drawLabels(ctx, data, w, h) {
   // Points
   for (const p of data.points) {
     const monsterName = state.classes[p.classId]?.name || p.classId;
-    const text = `${monsterName} (1)`;
+    const text = `${monsterName.slice(0,3)} (1)`;
     const { px, py } = logicalToPixel(p.x + off.dx, p.y + off.dy, w, h);
     ctx.fillText(text, px, py - 8);
   }
