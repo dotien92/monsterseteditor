@@ -42,37 +42,68 @@ export function hitTest(ev, canvas){
   const mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
   const W = canvas.width, H = canvas.height;
 
-  // 1) điểm single
   const PICK_RADIUS = 10;
-  for(let i=0;i<data.points.length;i++){
+  const HANDLE = 7;
+
+  // ========== 1) Points ==========
+  for (let i=0; i<data.points.length; i++) {
     const p = data.points[i];
     const {px,py} = pxFromGrid(p.x, p.y, W, H);
     const d2 = (mx - px)**2 + (my - py)**2;
-    if(d2 <= (PICK_RADIUS**2)) return { kind:'point', idx:i };
+    if (d2 <= (PICK_RADIUS**2)) {
+      return { kind:'point', idx:i };
+    }
   }
 
-  // 2) vùng spot (ưu tiên tay cầm)
-  const HANDLE = 7;
-  for(let i=0;i<data.spots.length;i++){
+  // ========== 2) Spot single (lockResize=true) ==========
+  for (let i=0; i<data.spots.length; i++) {
     const s = data.spots[i];
+    if (!s.lockResize) continue;
+    const p = pxFromGrid(s.x1, s.y1, W, H);
+    if (Math.abs(mx - p.px) <= HANDLE && Math.abs(my - p.py) <= HANDLE) {
+      return { kind:'spot', idx:i, resize:null }; 
+    }
+  }
+
+  // ========== 3) Spot thường (lockResize=false) ==========
+  let bestHit = null;
+  let bestArea = Infinity;
+
+  for (let i=0; i<data.spots.length; i++) {
+    const s = data.spots[i];
+    if (s.lockResize) continue;
+
     const a = pxFromGrid(s.x1, s.y1, W, H);
     const b = pxFromGrid(s.x2, s.y2, W, H);
     const x = Math.min(a.px,b.px), y = Math.min(a.py,b.py);
     const w = Math.abs(a.px-b.px), h = Math.abs(a.py-b.py);
+
+    // Ưu tiên tay cầm trước
     const corners = {
       tl: {x:x,     y:y},
       tr: {x:x+w,   y:y},
       bl: {x:x,     y:y+h},
       br: {x:x+w,   y:y+h},
     };
-    for(const [corner,pt] of Object.entries(corners)){
-      if(Math.abs(mx-pt.x)<=HANDLE && Math.abs(my-pt.y)<=HANDLE){
-        return { kind:'spot', idx:i, resize:corner };
+    for (const [corner,pt] of Object.entries(corners)) {
+      if (Math.abs(mx-pt.x)<=HANDLE && Math.abs(my-pt.y)<=HANDLE) {
+        const area = w * h;
+        if (area < bestArea) {
+          bestArea = area;
+          bestHit = { kind:'spot', idx:i, resize:corner };
+        }
       }
     }
-    if(mx>=x && mx<=x+w && my>=y && my<=y+h){
-      return { kind:'spot', idx:i };
+
+    // Nếu click bên trong
+    if (mx>=x && mx<=x+w && my>=y && my<=y+h) {
+      const area = w * h;
+      if (area < bestArea) {
+        bestArea = area;
+        bestHit = { kind:'spot', idx:i };
+      }
     }
   }
-  return null;
+
+  return bestHit;
 }
