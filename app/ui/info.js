@@ -31,6 +31,11 @@ export function renderInfoPanel(infoEl){
     rows.push(['Vị trí', `(x:${p.x}, y:${p.y})`]);
     rows.push(['Số lượng', '1']);
     rows.push(['Nguồn', `L${p.sourceLine ?? '?'}`]);
+    for (const key in p) {
+      if (Object.hasOwn(p, key)) {
+      console.log(`${key}: ${p[key]}`);
+     }
+    }
   } else {
     const s = data.spots[sel.idx];
     if(!s){ infoEl.innerHTML = '<div class="muted">Không tìm thấy item.</div>'; return; }
@@ -50,6 +55,11 @@ export function renderInfoPanel(infoEl){
     rows.push(['Số lượng', Number.isFinite(s.count) ? String(s.count) : '—']);
     if(Number.isFinite(s.value)) rows.push(['Giá trị', String(s.value)]);
     rows.push(['Nguồn', `L${s.sourceLine ?? '?'}`]);
+    for (const key in s) {
+      if (Object.hasOwn(s, key)) {
+      console.log(`${key}: ${s[key]}`);
+      }
+    }
   }
 
   infoEl.innerHTML = `

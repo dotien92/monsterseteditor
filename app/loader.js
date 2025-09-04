@@ -81,14 +81,16 @@ export function parseMSB(txt){
       if (t.length < 6) continue;
       const mob = Number(t[0]);
       const map = Number(t[1]);
+      const range = Number(t[2]);
       const x   = Number(t[3]);
       const y   = Number(t[4]);
+      const dir = Number(t[5]);
       if (![mob,map,x,y].every(Number.isFinite)) continue;
       const b = ensure(map);
       const isDeco = state.decorationIds?.has(mob);
       b.points.push({
         classId: mob,
-        x, y,
+        x, y, dir, range,
         isNPC: !isDeco,
         type: isDeco ? 'decoration' : 'npc',
         sourceLine: ln
@@ -99,10 +101,12 @@ export function parseMSB(txt){
       if (t.length < 9) continue;
       const mob = Number(t[0]);
       const map = Number(t[1]);
+      const range = Number(t[2]);
       const x1  = Number(t[3]);
       const y1  = Number(t[4]);
       const x2  = Number(t[5]);
       const y2  = Number(t[6]);
+      const dir  = Number(t[7]);
       const count = Number(t[8]);
       if (![mob,map,x1,y1,x2,y2].every(Number.isFinite)) continue;
       const b = ensure(map);
@@ -111,7 +115,7 @@ export function parseMSB(txt){
       const isSingle = (x1 === x2 && y1 === y2);
 
       b.spots.push({
-        classId: mob, x1, y1, x2, y2, count,
+        classId: mob, x1, y1, x2, y2, dir, range, count,
         isNPC: false, type: 'spot', sourceLine: ln,
         lockResize: isSingle   // 👈 thêm cờ
       });
@@ -121,19 +125,20 @@ export function parseMSB(txt){
       if (t.length < 10) continue;
       const mob = Number(t[0]);
       const map = Number(t[1]);
+      const range = Number(t[2]);
       const x1  = Number(t[3]);
       const y1  = Number(t[4]);
       const x2  = Number(t[5]);
       const y2  = Number(t[6]);
+      const dir  = Number(t[7]);
       const count = Number(t[8]);
       const value = Number(t[9]);
       if (![mob,map,x1,y1,x2,y2].every(Number.isFinite)) continue;
       const b = ensure(map);
 
       const isSingle = (x1 === x2 && y1 === y2);
-
       b.spots.push({
-        classId: mob, x1, y1, x2, y2, count, value,
+        classId: mob, x1, y1, x2, y2, dir, range, count, value,
         isNPC: false, type: 'invasion', sourceLine: ln,
         lockResize: isSingle   // 👈 thêm cờ
       });
@@ -143,12 +148,13 @@ export function parseMSB(txt){
       if (t.length < 6) continue;
       const mob = Number(t[0]);
       const map = Number(t[1]);
+      const range = Number(t[2]);
       const x   = Number(t[3]);
       const y   = Number(t[4]);
       const dir = Number(t[5]);
       if (![mob,map,x,y].every(Number.isFinite)) continue;
       const b = ensure(map);
-      b.points.push({ classId: mob, x, y, dir, isNPC: false, type: 'battle', sourceLine: ln });
+      b.points.push({ classId: mob, x, y, dir, range, isNPC: false, type: 'battle', sourceLine: ln });
     }
   }
 }

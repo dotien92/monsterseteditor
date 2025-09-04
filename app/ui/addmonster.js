@@ -185,6 +185,11 @@ export function bindCanvasForAddMonster(canvas) {
     if (e.button === 2) {
       state.addingMonster = null;
       state.dragData = null;
+      const addBtn = document.querySelector("#monsterAddPanel .addBtn");
+      if (addBtn) {
+        addBtn.textContent = "➕ Thêm Quái";
+        addBtn.classList.remove("adding");
+      }
       hideTooltip();
       draw(canvas);
       return;
@@ -192,7 +197,6 @@ export function bindCanvasForAddMonster(canvas) {
 
     const { x, y } = pixelToLogic(e.offsetX, e.offsetY, canvas);
     const m = state.addingMonster;
-
     if (m.blockType === 0 || m.blockType === 4) {
       // NPC/Deco hoặc Event → point
       addPointMonster(m.blockType, m.id, x, y, m.range, m.count, m.value, m.dir);
@@ -261,8 +265,6 @@ function addPointMonster(blockType, id, x, y, range, count, value, dir) {
       sourceLine: "New"
     });
   }
-
-
   saveHistory();
   refreshUI();
 }
@@ -273,13 +275,13 @@ function addSpotMonster(blockType, id, x1, y1, x2, y2, range, count, value, dir,
 
   if (blockType === 1) {
     data.spots.push({
-      classId: id, x1, y1, x2, y2, dir, range, count, value,
-      type: "spot", isNPC: false, sourceLine: "New", lockResize
+      classId: id, x1, y1, x2, y2, dir, range, count,
+      isNPC: false,type: "spot",  sourceLine: "New", lockResize
     });
   } else if (blockType === 3) {
     data.spots.push({
       classId: id, x1, y1, x2, y2, dir, range, count, value,
-      type: "invasion", isNPC: false, sourceLine: "New", lockResize
+      isNPC: false, type: "invasion", sourceLine: "New", lockResize
     });
   }
 
