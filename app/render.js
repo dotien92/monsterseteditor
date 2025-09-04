@@ -291,7 +291,7 @@ function drawLabels(ctx, data, w, h) {
   for (const s of data.spots) {
     const monsterName = state.classes[s.classId]?.name || s.classId;
     const count = s.count || 1;
-    const text = `${monsterName} (${count})`;
+    const text = `${monsterName.slice(0,3)}(${count})`;
 
     if (s.lockResize) {
       // Single dạng spot
@@ -308,4 +308,22 @@ function drawLabels(ctx, data, w, h) {
   }
 
   ctx.restore();
+}
+
+// === Tooltip hiển thị tọa độ theo chuột ===
+const tooltipEl = document.createElement("div");
+tooltipEl.id = "coordTooltip";
+tooltipEl.className = "coord-tooltip";
+tooltipEl.style.display = "none";
+document.body.appendChild(tooltipEl);
+
+export function updateTooltip(x, y, ev) {
+  tooltipEl.textContent = `(${x}, ${y})`;
+  tooltipEl.style.left = ev.clientX + "px";
+  tooltipEl.style.top  = ev.clientY + "px";
+  tooltipEl.style.display = "block";
+}
+
+export function hideTooltip() {
+  tooltipEl.style.display = "none";
 }

@@ -1,7 +1,7 @@
 // Bind toàn bộ tương tác UI (canvas + panel) và ghép các module con
 
 import { state } from '../state.js';
-import { draw } from '../render.js';
+import { updateTooltip, hideTooltip, draw } from '../render.js';
 import { CONFIG } from '../config.js';
 
 import { byId, setCursor, resizeCursorFor } from './dom.js';
@@ -108,7 +108,9 @@ export default function bindUI(){
     Xc = Math.max(0, Math.min(max, Xc));
     Yc = Math.max(0, Math.min(max, Yc));
     coordReadout.textContent = `(x,y) = (${Xc}, ${Yc})`;
+    updateTooltip(Xc, Yc, ev);
   });
+
 
   // hover/drag/resize & sync list
   canvas.addEventListener('mousedown', (ev)=>{

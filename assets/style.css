@@ -22,7 +22,7 @@ body {
   background: var(--bg);
   color: var(--text);
 }
-header {
+footer {
   padding: 12px 16px;
   background: linear-gradient(180deg, #17172a, #121222);
   position: sticky;
@@ -712,4 +712,17 @@ canvas {
   font-size: 13px;
   font-weight: 600;
   color: #cbd5e1;
+}
+
+.coord-tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 9999;
+  transform: translate(12px, -5px); /* nhích nhẹ để không đè lên cursor */
 }
