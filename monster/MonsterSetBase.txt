@@ -190,8 +190,8 @@ end
 21 2 10 71 43 71 43 -1 1 // Assassin
 21 2 10 60 57 60 57 -1 1 // Assassin
 21 2 10 64 29 64 29 -1 1 // Assassin
-21 2 10 31 39 31 39 -1 1 // Assassin
-21 2 10 28 12 28 12 -1 1 // Assassin
+21 2 10 28 41 28 41 -1 1 // Assassin
+21 2 10 24 12 24 12 -1 1 // Assassin
 22 2 10 133 115 133 115 -1 1 // Ice Monster
 22 2 10 117 184 117 184 -1 1 // Ice Monster
 22 2 10 100 123 100 123 -1 1 // Ice Monster
@@ -229,15 +229,16 @@ end
 21 2 10 195 217 197 225 -1 2 // Assassin
 21 2 10 230 194 232 203 -1 2 // Assassin
 20 2 10 228 197 234 201 -1 3 // Elite Yeti
-20 2 10 216 213 225 223 -1 3 // Elite Yeti
-20 2 10 231 213 240 223 -1 3 // Elite Yeti
-23 2 10 220 215 237 221 -1 3 // Hommerd
-21 2 10 30 11 38 27 -1 3 // Assassin
-19 2 10 30 21 38 38 -1 3 // Yeti
+20 2 10 216 213 225 223 -1 4 // Elite Yeti
+20 2 10 230 213 239 223 -1 4 // Elite Yeti
+23 2 10 220 215 237 221 -1 5 // Hommerd
+21 2 5 32 13 37 20 -1 3 // Assassin
+19 2 5 32 17 37 31 -1 3 // Yeti
 21 2 10 49 14 55 19 -1 3 // Assassin
 23 2 10 51 13 53 21 -1 2 // Hommerd
 24 2 10 219 80 227 85 -1 2 // Worm
 23 2 10 162 37 166 43 -1 2 // Hommerd
+21 2 5 32 27 37 35 -1 3 // Assassin
 end
 
 // Devias - Invasion
@@ -431,163 +432,37 @@ end
 
 // Tarkan - Monster
 1
-62 8 8 148 142 148 142 0 1 // Mutant
-62 8 8 153 152 153 152 0 1 // Mutant
-62 8 8 160 146 160 146 0 1 // Mutant
-62 8 8 155 137 155 137 0 1 // Mutant
-62 8 8 164 139 164 139 0 1 // Mutant
-62 8 8 153 128 153 128 0 1 // Mutant
-62 8 8 161 127 161 127 0 1 // Mutant
-62 8 8 171 129 171 129 0 1 // Mutant
-62 8 8 169 118 169 118 0 1 // Mutant
-62 8 8 157 119 157 119 0 1 // Mutant
-62 8 8 158 112 158 112 0 1 // Mutant
-62 8 8 176 115 176 115 0 1 // Mutant
-62 8 8 153 106 153 106 0 1 // Mutant
-62 8 8 133 92 133 92 0 1 // Mutant
-62 8 8 142 72 142 72 0 1 // Mutant
-62 8 8 158 93 158 93 0 1 // Mutant
-62 8 8 130 101 130 101 0 1 // Mutant
-62 8 8 124 84 124 84 0 1 // Mutant
 62 8 8 123 76 123 76 0 1 // Mutant
-60 8 8 127 24 127 24 0 1 // Bloody wolf
-60 8 8 141 25 141 25 0 1 // Bloody wolf
-60 8 8 137 34 137 34 0 1 // Bloody wolf
-60 8 8 120 36 120 36 0 1 // Bloody wolf
-60 8 8 131 42 131 42 0 1 // Bloody wolf
-60 8 8 148 33 148 33 0 1 // Bloody wolf
-60 8 8 148 45 148 45 0 1 // Bloody wolf
-60 8 8 139 44 139 44 0 1 // Bloody wolf
-60 8 8 147 64 147 64 0 1 // Bloody wolf
-60 8 8 133 70 133 70 0 1 // Bloody wolf
-60 8 8 136 58 136 58 0 1 // Bloody wolf
-60 8 8 132 50 132 50 0 1 // Bloody wolf
-60 8 8 120 48 120 48 0 1 // Bloody wolf
-60 8 8 160 100 160 100 0 1 // Bloody wolf
-60 8 8 149 96 149 96 0 1 // Bloody wolf
-60 8 8 145 102 145 102 0 1 // Bloody wolf
-60 8 8 141 95 141 95 0 1 // Bloody wolf
-60 8 8 153 72 153 72 0 1 // Bloody wolf
-60 8 8 165 109 165 109 0 1 // Bloody wolf
-60 8 8 122 66 122 66 0 1 // Bloody wolf
-60 8 8 110 39 110 39 0 1 // Bloody wolf
-60 8 8 104 64 104 64 0 1 // Bloody wolf
-60 8 8 97 49 97 49 0 1 // Bloody wolf
-60 8 8 93 59 93 59 0 1 // Bloody wolf
-60 8 8 89 79 89 79 0 1 // Bloody wolf
-60 8 8 95 90 95 90 0 1 // Bloody wolf
-60 8 8 81 71 81 71 0 1 // Bloody wolf
-60 8 8 72 70 72 70 0 1 // Bloody wolf
-60 8 8 45 77 45 77 0 1 // Bloody wolf
-60 8 8 64 87 64 87 0 1 // Bloody wolf
-60 8 8 40 87 40 87 0 1 // Bloody wolf
-60 8 8 25 93 25 93 0 1 // Bloody wolf
 60 8 8 31 69 31 69 0 1 // Bloody wolf
-57 8 8 85 60 85 60 0 1 // Iron Wheel
-57 8 8 87 85 87 85 0 1 // Iron Wheel
-57 8 8 80 92 80 92 0 1 // Iron Wheel
-57 8 8 74 82 74 82 0 1 // Iron Wheel
-57 8 8 58 75 58 75 0 1 // Iron Wheel
-57 8 8 65 63 65 63 0 1 // Iron Wheel
-57 8 8 36 67 36 67 0 1 // Iron Wheel
-57 8 8 28 78 28 78 0 1 // Iron Wheel
-57 8 8 33 82 33 82 0 1 // Iron Wheel
-57 8 8 31 94 31 94 0 1 // Iron Wheel
-57 8 8 44 96 44 96 0 1 // Iron Wheel
-58 8 8 33 89 33 89 0 1 // Tantalos
-58 8 8 47 82 47 82 0 1 // Tantalos
-58 8 8 59 91 59 91 0 1 // Tantalos
-58 8 8 69 81 69 81 0 1 // Tantalos
-57 8 8 36 126 36 126 0 1 // Iron Wheel
-57 8 8 60 135 60 135 0 1 // Iron Wheel
-57 8 8 60 159 60 159 0 1 // Iron Wheel
-57 8 8 49 143 49 143 0 1 // Iron Wheel
-57 8 8 80 128 80 128 0 1 // Iron Wheel
-57 8 8 96 126 96 126 0 1 // Iron Wheel
+58 8 8 51 83 51 83 0 1 // Tantalos
 57 8 8 56 125 56 125 0 1 // Iron Wheel
-58 8 8 47 131 47 131 0 1 // Tantalos
-58 8 8 26 135 26 135 0 1 // Tantalos
-58 8 8 89 124 89 124 0 1 // Tantalos
-58 8 8 72 126 72 126 0 1 // Tantalos
-58 8 8 73 144 73 144 0 1 // Tantalos
-58 8 8 86 137 86 137 0 1 // Tantalos
-61 8 8 94 198 94 198 0 1 // Beam Knight
-61 8 8 97 172 97 172 0 1 // Beam Knight
-61 8 8 80 195 80 195 0 1 // Beam Knight
-61 8 8 92 206 92 206 0 1 // Beam Knight
-61 8 8 81 210 81 210 0 1 // Beam Knight
-61 8 8 70 172 70 172 0 1 // Beam Knight
-61 8 8 68 164 68 164 0 1 // Beam Knight
-61 8 8 46 172 46 172 0 1 // Beam Knight
-61 8 8 42 215 42 215 0 1 // Beam Knight
-61 8 8 29 241 29 241 0 1 // Beam Knight
-58 8 8 73 155 73 155 0 1 // Tantalos
-58 8 8 49 158 49 158 0 1 // Tantalos
-58 8 8 59 145 59 145 0 1 // Tantalos
-58 8 8 36 160 36 160 0 1 // Tantalos
-58 8 8 86 166 86 166 0 1 // Tantalos
-58 8 8 87 187 87 187 0 1 // Tantalos
-58 8 8 104 209 104 209 0 1 // Tantalos
 61 8 8 22 246 22 246 0 1 // Beam Knight
-61 8 8 35 237 35 237 0 1 // Beam Knight
-61 8 8 44 247 44 247 0 1 // Beam Knight
-61 8 8 45 226 45 226 0 1 // Beam Knight
-60 8 8 101 80 101 80 0 1 // Bloody wolf
-58 8 8 106 137 106 137 0 1 // Tantalos
-58 8 8 113 138 113 138 0 1 // Tantalos
-58 8 8 110 156 110 156 0 1 // Tantalos
-58 8 8 109 186 109 186 0 1 // Tantalos
-58 8 8 118 209 118 209 0 1 // Tantalos
-58 8 8 119 182 119 182 0 1 // Tantalos
-58 8 8 122 160 122 160 0 1 // Tantalos
-61 8 8 115 169 115 169 0 1 // Beam Knight
-61 8 8 120 196 120 196 0 1 // Beam Knight
-61 8 8 112 194 112 194 0 1 // Beam Knight
-61 8 8 116 219 116 219 0 1 // Beam Knight
-61 8 8 163 196 163 196 0 1 // Beam Knight
-61 8 8 176 213 176 213 0 1 // Beam Knight
-61 8 8 165 225 165 225 0 1 // Beam Knight
-61 8 8 129 178 129 178 0 1 // Beam Knight
-61 8 8 128 189 128 189 0 1 // Beam Knight
-63 8 8 155 216 155 216 0 1 // Death Beam Knight
-63 8 8 148 206 148 206 0 1 // Death Beam Knight
-58 8 8 20 210 20 210 0 1 // Tantalos
-58 8 8 36 229 36 229 0 1 // Tantalos
-58 8 8 26 233 26 233 0 1 // Tantalos
-58 8 8 18 236 18 236 0 1 // Tantalos
-61 8 8 8 237 8 237 0 1 // Beam Knight
-61 8 8 8 222 8 222 0 1 // Beam Knight
-61 8 8 9 207 9 207 0 1 // Beam Knight
-61 8 8 173 200 173 200 0 1 // Beam Knight
 63 8 8 155 192 155 192 0 1 // Death Beam Knight
-60 8 10 145 50 151 56 0 3 // Bloody wolf
-60 8 10 146 56 152 61 0 3 // Bloody wolf
-60 8 10 129 81 136 86 0 3 // Bloody wolf
-62 8 10 133 77 138 87 0 3 // Mutant
-62 8 10 184 110 192 114 0 3 // Mutant
-62 8 10 187 116 195 120 0 3 // Mutant
-62 8 10 197 109 197 109 0 1 // Mutant
-62 8 10 200 115 200 115 0 1 // Mutant
-62 8 10 111 93 111 93 0 1 // Mutant
-62 8 10 111 84 111 84 0 1 // Mutant
-57 8 10 73 88 77 96 0 3 // Iron Wheel
-57 8 10 90 67 94 77 0 3 // Iron Wheel
-60 8 10 68 88 71 95 0 3 // Bloody wolf
-60 8 10 87 70 97 74 0 3 // Bloody wolf
-58 8 10 89 147 96 153 0 3 // Tantalos
-57 8 10 91 149 98 157 0 3 // Iron Wheel
-58 8 8 94 139 94 139 0 1 // Tantalos
-58 8 8 80 153 80 153 0 1 // Tantalos
-57 8 8 103 152 103 152 0 1 // Iron Wheel
-57 8 8 91 163 91 163 0 1 // Iron Wheel
-57 8 10 96 29 101 35 0 4 // Iron Wheel
-60 8 8 94 31 94 31 0 1 // Bloody wolf
-63 8 8 158 198 163 211 -1 3 // Death Beam Knight
-61 8 8 154 206 169 211 -1 3 // Beam Knight
-58 8 8 29 134 38 145 -1 3 // Tantalos
-57 8 8 33 136 41 148 -1 3 // Iron Wheel
-58 8 8 20 215 30 222 -1 3 // Tantalos
-61 8 8 21 217 28 228 -1 3 // Beam Knight
+60 8 5 145 50 151 56 0 3 // Bloody wolf
+60 8 5 146 56 152 61 0 3 // Bloody wolf
+60 8 5 128 81 137 85 0 3 // Bloody wolf
+62 8 5 131 78 134 88 0 3 // Mutant
+62 8 0 184 110 192 114 0 3 // Mutant
+62 8 0 187 116 195 120 0 3 // Mutant
+57 8 6 73 88 77 95 0 3 // Iron Wheel
+57 8 6 90 67 94 77 0 3 // Iron Wheel
+60 8 5 65 90 68 97 0 3 // Bloody wolf
+60 8 6 87 70 97 74 0 3 // Bloody wolf
+58 8 5 89 147 96 153 0 3 // Tantalos
+57 8 5 91 149 98 157 0 3 // Iron Wheel
+57 8 6 96 29 101 35 0 5 // Iron Wheel
+63 8 5 158 200 163 214 -1 4 // Death Beam Knight
+61 8 5 154 206 169 211 -1 4 // Beam Knight
+58 8 5 29 134 38 145 -1 3 // Tantalos
+57 8 5 33 136 41 148 -1 3 // Iron Wheel
+58 8 6 20 215 30 222 -1 3 // Tantalos
+61 8 5 21 217 28 228 -1 4 // Beam Knight
+62 8 5 164 104 169 109 0 3 // Mutant
+60 8 5 155 98 160 103 0 3 // Bloody wolf
+62 8 5 155 115 160 120 0 3 // Mutant
+60 8 5 148 107 153 112 0 3 // Bloody wolf
+57 8 6 60 78 68 83 0 3 // Iron Wheel
+60 8 5 75 73 79 81 0 3 // Bloody wolf
 end
 
 // Tarkan - Invasion

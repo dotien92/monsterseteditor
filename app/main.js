@@ -13,6 +13,32 @@ import { renderMonsterFilters } from './ui/list.js';
 import { initAddMonsterUI, bindCanvasForAddMonster } from "./ui/addmonster.js";
 import { saveToServer, exportMonsterSetBase, downloadFile } from "./save.js";
 
+const copyBtn = document.getElementById("copyMonsterBtn");
+copyBtn.addEventListener("click", async () => {
+  if (!confirm("Bạn có chắc muốn copy MonsterSetBase.txt sang C:\\Muserver\\data\\monster\\ ?\nFile cũ sẽ bị ghi đè.")) {
+    return;
+  }
+
+  copyBtn.disabled = true;
+  copyBtn.textContent = "⏳ Đang copy...";
+
+  try {
+    const res = await fetch("app/copy_monster.php", { method: "POST" });
+    const data = await res.json();
+
+    if (data.success) {
+      alert("✅ " + data.message);
+    } else {
+      alert("❌ " + data.error);
+    }
+  } catch (err) {
+    alert("⚠️ Lỗi kết nối tới PHP server: " + err.message);
+  } finally {
+    copyBtn.disabled = false;
+    copyBtn.textContent = "📂 Copy sang MU Server";
+  }
+});
+
 window.addEventListener('DOMContentLoaded', async ()=>{
   bindCanvasForAddMonster(document.getElementById("view"));
   
